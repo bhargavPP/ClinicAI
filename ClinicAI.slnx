@@ -1,4 +1,8 @@
 <Solution>
+  <Project Path="clinic-ai-ui/clinic-ai-ui.esproj">
+    <Build />
+    <Deploy />
+  </Project>
   <Project Path="ClinicAI.API/ClinicAI.API.csproj" />
   <Project Path="ClinicAI.Application/ClinicAI.Application.csproj" />
   <Project Path="ClinicAI.Domain/ClinicAI.Domain.csproj" />
