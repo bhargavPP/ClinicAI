@@ -9,9 +9,17 @@
   <br />
   <br />
 
-  <label>Patient Id(temporary)</label>
-  <input [(ngModel)]="model.patientId" name="patientId" required />
+  <label>Name</label>
+  <input [(ngModel)]="model.patientName" name="patientName" required />
 
+  <label>Email</label>
+  <input [(ngModel)]="model.email" name="email" required />
+
+  <label>Phone</label>
+  <input [(ngModel)]="model.phone" name="phone" required />
+
+  <label>Date of Birth</label>
+  <input type="date" [(ngModel)]="model.dateOfBirth" name="dateOfBirth" />
   <br /><br />
 
   <label>Date</label>

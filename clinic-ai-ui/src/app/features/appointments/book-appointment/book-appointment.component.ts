@@ -1,6 +1,7 @@
 import { Component ,OnInit} from '@angular/core';
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { DoctorService, Doctor } from '../../../core/services/doctor.service';
+import { PatientService } from '../../../core/services/patient.service';
 
 @Component({
   selector: 'app-book-appointment',
@@ -12,7 +13,10 @@ export class BookAppointmentComponent implements OnInit{
   doctors: Doctor[] = [];
   model = {
      doctorId: '',
-    patientId: '',
+    patientName: '',
+  email: '',
+  phone: '',
+  dateOfBirth: '',
     appointmentDate: '',
     startTime: '',
     endTime: '',
@@ -21,7 +25,8 @@ export class BookAppointmentComponent implements OnInit{
 
   constructor(
     private doctorService: DoctorService,
-    private appointmentService: AppointmentService
+    private appointmentService: AppointmentService,
+    private patientService: PatientService
   ) {}
 
   ngOnInit(): void {
@@ -30,14 +35,33 @@ export class BookAppointmentComponent implements OnInit{
       });
     }
 
-  submit(){
-    this.appointmentService.createAppointment(this.model).subscribe(response => {
-      next:()=>{
-        alert('Appointment booked successfully!');
-      }
-      error:()=>{
-        alert('Failed to book appointment. Please try again.');
-        }
-    });
+ submit() {
+
+  const patient = {
+    name: this.model.patientName,
+    email: this.model.email,
+    phone: this.model.phone,
+    dateOfBirth: this.model.dateOfBirth
+  };
+
+  this.patientService.createPatient(patient).subscribe({
+    next: (patientId) => {
+
+      const appointment = {
+        doctorId: this.model.doctorId,
+        patientId: patientId,
+        appointmentDate: this.model.appointmentDate,
+        startTime: this.model.startTime,
+        endTime: this.model.endTime,
+        notes: this.model.notes
+      };
+
+      this.appointmentService.createAppointment(appointment).subscribe({
+        next: () => alert('Appointment booked'),
+        error: err => alert(err.error)
+      });
+    },
+    error: err => alert(err.error)
+  });
 }
 }

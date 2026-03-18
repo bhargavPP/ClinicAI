@@ -73,6 +73,7 @@
               "buildTarget": "clinic-ai-ui:build:development"
             }
           },
+
           "defaultConfiguration": "development",
           "options": {
             "port": 51912

@@ -7,9 +7,13 @@ namespace ClinicAI.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorController : ControllerBase
+    public class DoctorsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        public DoctorsController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
