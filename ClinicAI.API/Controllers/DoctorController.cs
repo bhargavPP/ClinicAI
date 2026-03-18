@@ -1,7 +1,6 @@
 ﻿using ClinicAI.Application.Features.Doctors.Commands.CreateDoctor;
 using ClinicAI.Application.Features.Doctors.Queries.GetDoctors;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAI.API.Controllers
