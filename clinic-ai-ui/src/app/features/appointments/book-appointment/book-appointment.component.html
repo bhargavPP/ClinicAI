@@ -1,0 +1,39 @@
+<h2>Book Appointment</h2>
+<form (ngSubmit)="submit()">
+  <label>Doctor</label>
+  <select [(ngModel)]="model.doctorId" name="doctorId" required>
+    <option value="">Select Doctor</option>
+    <option *ngFor="let d of doctors" [value]="d.id">{{ d.name }} - {{d.specilization}}</option>
+  </select>
+
+  <br />
+  <br />
+
+  <label>Patient Id(temporary)</label>
+  <input [(ngModel)]="model.patientId" name="patientId" required />
+
+  <br /><br />
+
+  <label>Date</label>
+  <input [(ngModel)]="model.appointmentDate" type="date" name="appointmentDate" required />
+
+  <br /><br />
+
+  <label>Start Time</label>
+  <input type="time" [(ngModel)]="model.startTime" name="startTime" required />
+
+  <br /><br />
+
+  <label>End Time</label>
+  <input type="time" [(ngModel)]="model.endTime" name="endTime" required />
+
+  <br /><br />
+
+  <label>Notes</label>
+  <textarea [(ngModel)]="model.notes" name="notes"></textarea>
+
+  <br /><br />
+
+  <button type="submit">Book</button>
+
+</form>
