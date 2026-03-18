@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ClinicAI.API/ClinicAI.API.csproj" />
+  <Project Path="ClinicAI.Application/ClinicAI.Application.csproj" />
+  <Project Path="ClinicAI.Domain/ClinicAI.Domain.csproj" />
+  <Project Path="ClinicAI.Infrastructure/ClinicAI.Infrastructure.csproj" />
+</Solution>
