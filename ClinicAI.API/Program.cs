@@ -1,4 +1,6 @@
+using ClinicAI.Application.Interfaces;
 using ClinicAI.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddOpenApi();
 
+
+builder.Services.AddScoped<IClinicDbContext>(Provider => Provider.GetRequiredService<ClinicDbContext>());
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ClinicAI.Application.common.Behaviors.ValidationBehavior<,>));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
