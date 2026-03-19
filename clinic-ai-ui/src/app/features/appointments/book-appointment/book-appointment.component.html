@@ -1,47 +1,68 @@
-<h2>Book Appointment</h2>
-<form (ngSubmit)="submit()">
-  <label>Doctor</label>
-  <select [(ngModel)]="model.doctorId" name="doctorId" required>
-    <option value="">Select Doctor</option>
-    <option *ngFor="let d of doctors" [value]="d.id">{{ d.name }} - {{d.specilization}}</option>
-  </select>
+<div class="card shadow">
+  <div class="card-header bg-primary text-white">
+    <h4>Book Appointment</h4>
+  </div>
 
-  <br />
-  <br />
+  <div class="card-body">
+    <form (ngSubmit)="submit()">
 
-  <label>Name</label>
-  <input [(ngModel)]="model.patientName" name="patientName" required />
+      <div class="mb-3">
+        <label class="form-label">Doctor</label>
+        <select class="form-select" [(ngModel)]="model.doctorId" name="doctorId" required>
+          <option value="">Select Doctor</option>
+          <option *ngFor="let d of doctors" [value]="d.id">
+            {{ d.name }} - {{ d.specialization }}
+          </option>
+        </select>
+      </div>
 
-  <label>Email</label>
-  <input [(ngModel)]="model.email" name="email" required />
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label>Name</label>
+          <input class="form-control" [(ngModel)]="model.patientName" name="patientName" required />
+        </div>
 
-  <label>Phone</label>
-  <input [(ngModel)]="model.phone" name="phone" required />
+        <div class="col-md-4 mb-3">
+          <label>Email</label>
+          <input class="form-control" [(ngModel)]="model.email" name="email" required />
+        </div>
 
-  <label>Date of Birth</label>
-  <input type="date" [(ngModel)]="model.dateOfBirth" name="dateOfBirth" />
-  <br /><br />
+        <div class="col-md-4 mb-3">
+          <label>Phone</label>
+          <input class="form-control" [(ngModel)]="model.phone" name="phone" required />
+        </div>
+      </div>
 
-  <label>Date</label>
-  <input [(ngModel)]="model.appointmentDate" type="date" name="appointmentDate" required />
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label>Date of Birth</label>
+          <input type="date" class="form-control" [(ngModel)]="model.dateOfBirth" name="dateOfBirth" />
+        </div>
 
-  <br /><br />
+        <div class="col-md-4 mb-3">
+          <label>Appointment Date</label>
+          <input type="date" class="form-control" [(ngModel)]="model.appointmentDate" name="appointmentDate" required />
+        </div>
+      </div>
 
-  <label>Start Time</label>
-  <input type="time" [(ngModel)]="model.startTime" name="startTime" required />
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label>Start Time</label>
+          <input type="time" class="form-control" [(ngModel)]="model.startTime" name="startTime" required />
+        </div>
 
-  <br /><br />
+        <div class="col-md-4 mb-3">
+          <label>End Time</label>
+          <input type="time" class="form-control" [(ngModel)]="model.endTime" name="endTime" required />
+        </div>
+      </div>
 
-  <label>End Time</label>
-  <input type="time" [(ngModel)]="model.endTime" name="endTime" required />
+      <div class="mb-3">
+        <label>Notes</label>
+        <textarea class="form-control" [(ngModel)]="model.notes" name="notes"></textarea>
+      </div>
 
-  <br /><br />
-
-  <label>Notes</label>
-  <textarea [(ngModel)]="model.notes" name="notes"></textarea>
-
-  <br /><br />
-
-  <button type="submit">Book</button>
-
-</form>
+      <button class="btn btn-success w-100">Book Appointment</button>
+    </form>
+  </div>
+</div>

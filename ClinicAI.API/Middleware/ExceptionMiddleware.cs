@@ -23,6 +23,7 @@ namespace ClinicAI.API.Middleware
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
 

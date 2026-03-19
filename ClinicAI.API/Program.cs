@@ -12,9 +12,19 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200", "http://localhost:51912")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
+            // In development allow any origin to ease local testing (including accessing the UI via LAN IP)
+            if (builder.Environment.IsDevelopment())
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            }
+            else
+            {
+                policy.WithOrigins("http://localhost:4200", "http://localhost:51912")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            }
         });
 });
 builder.Services.AddMediatR(cfg =>
@@ -41,7 +51,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// Only redirect HTTP -> HTTPS in non-development environments to avoid
+// breaking preflight (OPTIONS) requests during local development.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 // ✅ 1. Exception middleware FIRST
 app.UseMiddleware<ClinicAI.API.Middleware.ExceptionMiddleware>();

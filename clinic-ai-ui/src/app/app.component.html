@@ -1,10 +1,15 @@
-<h1>Clinic AI</h1>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Clinic AI</a>
 
-<nav>
-  <a routerLink="/doctors">Doctors</a>
-  <a routerLink="/book">Book Appointment</a>
+    <div class="navbar-nav">
+      <a class="nav-link" routerLink="/doctors">Doctors</a>
+      <a class="nav-link" routerLink="/book">Book Appointment</a>
+      <a class="nav-link" routerLink="/admin">Admin</a>
+    </div>
+  </div>
 </nav>
 
-<hr>
-
-<router-outlet></router-outlet>
+<div class="container mt-4">
+  <router-outlet></router-outlet>
+</div>

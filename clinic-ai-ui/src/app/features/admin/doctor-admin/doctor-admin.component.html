@@ -1,0 +1,53 @@
+<div class="row">
+
+  <!-- Add Doctor -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header bg-success text-white">
+        Add Doctor
+      </div>
+
+      <div class="card-body">
+        <input class="form-control mb-2" placeholder="Name" [(ngModel)]="newDoctor.name" />
+        <input class="form-control mb-2" placeholder="Specialization" [(ngModel)]="newDoctor.specialization" />
+        <input class="form-control mb-2" placeholder="Email" [(ngModel)]="newDoctor.email" />
+        <input class="form-control mb-2" placeholder="Phone" [(ngModel)]="newDoctor.phone" />
+
+        <button class="btn btn-success w-100" (click)="addDoctor()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Doctor List -->
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        Doctors
+      </div>
+
+      <div class="card-body">
+        <table class="table table-striped">
+          <tr>
+            <th>Name</th>
+            <th>Specialization</th>
+            <th>Action</th>
+          </tr>
+
+          <tr *ngFor="let d of doctors">
+            <td>{{ d.name }}</td>
+            <td>{{ d.specialization }}</td>
+            <td>
+              <button class="btn btn-primary btn-sm me-2" (click)="updateDoctor(d)">
+                Update
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="deleteDoctor(d.id)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

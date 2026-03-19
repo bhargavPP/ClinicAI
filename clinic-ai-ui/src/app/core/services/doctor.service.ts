@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 export interface Doctor{
   id:string;
   name:string;
-  specilization:string;
+  specialization:string;
   email:string;
   phone:string;
 }
@@ -23,4 +23,13 @@ export class DoctorService {
   getDoctors(): Observable<Doctor[]> {
     return this.http.get<Doctor[]>(this.apiUrl);
     }
+  createDoctor(data: any) {
+    return this.http.post(this.apiUrl, data);
+  }
+  deleteDoctor(id: string) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+  updateDoctor(doctor: Doctor) {
+    return this.http.put(`${this.apiUrl}/${doctor.id}`, doctor) 
+  }
 }

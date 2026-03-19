@@ -8,7 +8,6 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\clinic-ai-ui\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\app\features\" />
     <Folder Include="src\app\shared\" />
   </ItemGroup>
 </Project>

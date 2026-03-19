@@ -1,12 +1,16 @@
 import { Component ,OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { DoctorService, Doctor } from '../../../core/services/doctor.service';
 import { PatientService } from '../../../core/services/patient.service';
 
 @Component({
   selector: 'app-book-appointment',
-  templateUrl: './book-appointment.component.html'
-   
+  templateUrl: './book-appointment.component.html',
+  standalone: true,
+  imports: [CommonModule, FormsModule]
+
 })
 export class BookAppointmentComponent implements OnInit{
 
