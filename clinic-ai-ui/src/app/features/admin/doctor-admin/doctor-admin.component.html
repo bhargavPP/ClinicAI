@@ -26,24 +26,39 @@
       </div>
 
       <div class="card-body">
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered">
           <tr>
             <th>Name</th>
             <th>Specialization</th>
+            <th>Email</th>
+            <th>Phone</th>
             <th>Action</th>
           </tr>
 
           <tr *ngFor="let d of doctors">
-            <td>{{ d.name }}</td>
-            <td>{{ d.specialization }}</td>
-            <td>
-              <button class="btn btn-primary btn-sm me-2" (click)="updateDoctor(d)">
-                Update
-              </button>
-              <button class="btn btn-danger btn-sm" (click)="deleteDoctor(d.id)">
-                Delete
-              </button>
-            </td>
+            <ng-container *ngIf="editDoctorId !== d.id; else editTpl">
+              <td> {{ d.name }} </td>
+              <td> {{ d.specialization }} </td>
+              <td> {{ d.email }} </td>
+              <td> {{ d.phone }} </td>
+              <td>
+                <button class="btn btn-secondary btn-sm me-2" (click)="beginEdit(d)">Edit</button>
+                <button class="btn btn-danger btn-sm" (click)="deleteDoctor(d.id)">Delete</button>
+              </td>
+            </ng-container>
+            <ng-template #editTpl>
+              <td><input class="form-control" [(ngModel)]="editModel.name" /></td>
+              <td><input class="form-control" [(ngModel)]="editModel.specialization" /></td>
+              <td><input class="form-control" [(ngModel)]="editModel.email" /></td>
+              <td><input class="form-control" [(ngModel)]="editModel.phone" /></td>
+              <td>
+                <button class="btn btn-success btn-sm me-2" (click)="saveEdit()">Save</button>
+                <button class="btn btn-outline-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
+                <div *ngIf="validationErrors.length" class="mt-2 text-danger">
+                  <div *ngFor="let err of validationErrors">{{ err }}</div>
+                </div>
+              </td>
+            </ng-template>
           </tr>
         </table>
       </div>

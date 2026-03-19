@@ -55,7 +55,12 @@ if (app.Environment.IsDevelopment())
 // breaking preflight (OPTIONS) requests during local development.
 if (!app.Environment.IsDevelopment())
 {
+// Only enable HTTPS redirection in non-development environments to avoid
+// redirecting HTTP preflight (OPTIONS) requests during local development.
+if (!app.Environment.IsDevelopment())
+{
     app.UseHttpsRedirection();
+}
 }
 
 // ✅ 1. Exception middleware FIRST
