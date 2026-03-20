@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService, Doctor } from '../../../core/services/doctor.service';
@@ -7,10 +7,11 @@ import { DoctorService, Doctor } from '../../../core/services/doctor.service';
   selector: 'app-doctor-admin',
   templateUrl: './doctor-admin.component.html',
   styleUrls: ['./doctor-admin.component.css'],
-  standalone: true,
+ 
   imports: [CommonModule, FormsModule]
 })
 export class DoctorAdminComponent implements OnInit {
+  errors: String[] = [];
 
   doctors: Doctor[] = [];
   editDoctorId: string | null = null;
@@ -24,7 +25,7 @@ export class DoctorAdminComponent implements OnInit {
     phone: ''
   };
 
-  constructor(private doctorService: DoctorService) { }
+  constructor(private doctorService: DoctorService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadDoctors();
@@ -33,8 +34,9 @@ export class DoctorAdminComponent implements OnInit {
   loadDoctors(): void {
     this.doctorService.getDoctors().subscribe({
       next: (data: Doctor[]) => {
-        console.log(' Doctors loaded:', data);
+     
         this.doctors = [...data];
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error(' Error loading doctors:', err);
@@ -46,21 +48,25 @@ export class DoctorAdminComponent implements OnInit {
   }
 
   addDoctor(): void {
+    
     // validate before creating
     this.validationErrors = this.validateDoctor(this.newDoctor as Partial<Doctor>);
     if (this.validationErrors.length > 0) {
+      
       return;
     }
-
+    
     this.doctorService.createDoctor(this.newDoctor)
       .subscribe({
         next: () => {
+
           this.loadDoctors();
           this.resetForm();
+           
         },
-        error: (err) => {
-          console.error(' Error creating doctor:', err);
-          this.validationErrors = [err?.error || 'Failed to create doctor'];
+        error: (errors: string[]) => {
+        
+          this.validationErrors = errors; this.cdr.detectChanges();
         }
       });
   }
@@ -143,7 +149,7 @@ export class DoctorAdminComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.newDoctor = {
+     this.newDoctor = {
       name: '',
       specialization: '',
       email: '',

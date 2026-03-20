@@ -1,5 +1,12 @@
 <div class="row">
+  <div *ngIf="validationErrors.length" class="alert alert-danger" >
+    <ul>
+      <li *ngFor="let e of validationErrors">{{ e }}
 
+      </li>
+    </ul>
+
+  </div>
   <!-- Add Doctor -->
   <div class="col-md-4">
     <div class="card">
@@ -8,12 +15,12 @@
       </div>
 
       <div class="card-body">
-        <input class="form-control mb-2" placeholder="Name" [(ngModel)]="newDoctor.name" />
-        <input class="form-control mb-2" placeholder="Specialization" [(ngModel)]="newDoctor.specialization" />
-        <input class="form-control mb-2" placeholder="Email" [(ngModel)]="newDoctor.email" />
-        <input class="form-control mb-2" placeholder="Phone" [(ngModel)]="newDoctor.phone" />
+        <input class="form-control mb-2" placeholder="Name" name="name" [(ngModel)]="newDoctor.name" required/>
+        <input class="form-control mb-2" placeholder="Specialization" name="specialization" [(ngModel)]="newDoctor.specialization" required/>
+        <input class="form-control mb-2" placeholder="Email" name="email" [(ngModel)]="newDoctor.email" required/>
+        <input class="form-control mb-2" placeholder="Phone" name="phone" [(ngModel)]="newDoctor.phone" required/>
 
-        <button class="btn btn-success w-100" (click)="addDoctor()">Add</button>
+        <button class="btn btn-success w-100" (click)="addDoctor()" [disabled]="!newDoctor.name || !newDoctor.specialization || !newDoctor.email || !newDoctor.phone">Add</button>
       </div>
     </div>
   </div>
@@ -26,40 +33,48 @@
       </div>
 
       <div class="card-body">
+    
         <table class="table table-striped table-bordered">
-          <tr>
-            <th>Name</th>
-            <th>Specialization</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Action</th>
-          </tr>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Specialization</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let d of doctors">
 
-          <tr *ngFor="let d of doctors">
-            <ng-container *ngIf="editDoctorId !== d.id; else editTpl">
-              <td> {{ d.name }} </td>
-              <td> {{ d.specialization }} </td>
-              <td> {{ d.email }} </td>
-              <td> {{ d.phone }} </td>
-              <td>
-                <button class="btn btn-secondary btn-sm me-2" (click)="beginEdit(d)">Edit</button>
-                <button class="btn btn-danger btn-sm" (click)="deleteDoctor(d.id)">Delete</button>
-              </td>
+              <tr *ngIf="editDoctorId !== d.id; else editTpl">
+                <td> {{ d.name }} </td>
+                <td> {{ d.specialization }} </td>
+                <td> {{ d.email }} </td>
+                <td> {{ d.phone }} </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm me-2" (click)="beginEdit(d)">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteDoctor(d.id)">Delete</button>
+                </td>
+              </tr>
+              <ng-template #editTpl>
+                <tr>
+                  <td><input class="form-control" [(ngModel)]="editModel.name" /></td>
+                  <td><input class="form-control" [(ngModel)]="editModel.specialization" /></td>
+                  <td><input class="form-control" [(ngModel)]="editModel.email" /></td>
+                  <td><input class="form-control" [(ngModel)]="editModel.phone" /></td>
+                  <td>
+                    <button class="btn btn-success btn-sm me-2" (click)="saveEdit()">Save</button>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
+                    <div *ngIf="validationErrors.length" class="mt-2 text-danger">
+                      <div *ngFor="let err of validationErrors">{{ err }}</div>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
             </ng-container>
-            <ng-template #editTpl>
-              <td><input class="form-control" [(ngModel)]="editModel.name" /></td>
-              <td><input class="form-control" [(ngModel)]="editModel.specialization" /></td>
-              <td><input class="form-control" [(ngModel)]="editModel.email" /></td>
-              <td><input class="form-control" [(ngModel)]="editModel.phone" /></td>
-              <td>
-                <button class="btn btn-success btn-sm me-2" (click)="saveEdit()">Save</button>
-                <button class="btn btn-outline-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
-                <div *ngIf="validationErrors.length" class="mt-2 text-danger">
-                  <div *ngFor="let err of validationErrors">{{ err }}</div>
-                </div>
-              </td>
-            </ng-template>
-          </tr>
+
+          </tbody>
         </table>
       </div>
     </div>

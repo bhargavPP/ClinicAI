@@ -26,6 +26,7 @@ namespace ClinicAI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateDoctorCommand command)
         {
+            
             var id = await _mediator.Send(command);
             return Ok(id);
         }

@@ -19,7 +19,7 @@ namespace ClinicAI.Application.Features.Doctors.Commands.CreateDoctor
                 .EmailAddress().WithMessage("Invalid email format.");
             RuleFor(x => x.Phone)
                 .NotEmpty().WithMessage("Phone number is required.")
-                .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("Invalid phone number format.");
+                .Matches(@"^\+?[0-9\s\-()]{7,20}$").WithMessage("Invalid phone number format.");
         }
     }
 }

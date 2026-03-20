@@ -8,6 +8,9 @@ import { DoctorListComponent } from './features/doctors/doctor-list/doctor-list.
 import { BookAppointmentComponent } from './features/appointments/book-appointment/book-appointment.component';
 import { FormsModule } from '@angular/forms';
 import { DoctorAdminComponent } from './features/admin/doctor-admin/doctor-admin.component';
+
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 @NgModule({
   declarations: [],
   imports: [
@@ -22,7 +25,9 @@ import { DoctorAdminComponent } from './features/admin/doctor-admin/doctor-admin
     BookAppointmentComponent,
     DoctorAdminComponent
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

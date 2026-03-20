@@ -24,9 +24,26 @@ namespace ClinicAI.API.Middleware
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
 
+                // Handle FluentValidation exceptions with structured response
+                if (ex is FluentValidation.ValidationException vex)
+                {
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                    // Group errors by property name
+                    var errors = vex.Errors
+                        .GroupBy(e => string.IsNullOrWhiteSpace(e.PropertyName) ? "" : e.PropertyName)
+                        .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+
+                    await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        errors
+                    }));
+                    return;
+                }
+
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 await context.Response.WriteAsync(
                     System.Text.Json.JsonSerializer.Serialize(new
                     {
