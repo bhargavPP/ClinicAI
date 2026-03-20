@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClinicAI.Domain.Entities
+﻿namespace ClinicAI.Domain.Entities
 {
     public class Appointment
     {

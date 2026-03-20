@@ -16,6 +16,7 @@ namespace ClinicAI.Infrastructure.Persistence
         public DbSet<Doctor> Doctors => Set<Doctor>();
         public DbSet<Patient> Patients => Set<Patient>();
         public DbSet<Appointment> Appointments => Set<Appointment>();
+        public DbSet<User> Users => Set<User>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -55,6 +56,18 @@ namespace ClinicAI.Infrastructure.Persistence
                 entity.HasOne(a => a.Patient)
                       .WithMany(p => p.Appointments)
                       .HasForeignKey(a => a.PatientId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(d => d.id);
+                entity.Property(a => a.Email).IsRequired();
+                entity.Property(a => a.PasswordHash).IsRequired();
+
+                entity.HasMany(u => u.Patients)
+                      .WithOne(p => p.User)
+                      .HasForeignKey(p => p.UserId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
         }
