@@ -157,10 +157,10 @@ http://localhost:4200
 
 ## Author
 
-Developed as part of a full-stack learning and system design implementation.
+Developed as part of a client Requirement
 
 ---
 
 ## License
 
-This project is for educational and demonstration purposes.
+Bhargav Patel 
