@@ -15,6 +15,6 @@ namespace ClinicAI.Domain.Entities
 
         public string Phone { get; set; } = null!;
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-
+        public ICollection<DoctorsAvailability> DoctorsAvailabilities { get; set; } = new List<DoctorsAvailability>();
     }
 }
