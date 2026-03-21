@@ -9,6 +9,8 @@ namespace ClinicAI.Application.Interfaces
         DbSet<Patient> Patients { get; }
         DbSet<Appointment> Appointments { get; }
 
+        DbSet<User> Users { get; }
+        DbSet<DoctorsAvailability> DoctorsAvailabilities { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

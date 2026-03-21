@@ -1,7 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService, Doctor } from '../../../core/services/doctor.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmService } from '../../../core/services/confirm.service';
 
 @Component({
   selector: 'app-doctor-admin',
@@ -25,7 +27,8 @@ export class DoctorAdminComponent implements OnInit {
     phone: ''
   };
 
-  constructor(private doctorService: DoctorService, private cdr: ChangeDetectorRef) { }
+  constructor(private doctorService: DoctorService, private toast: ToastService,
+    private confirmService: ConfirmService) { }
 
   ngOnInit(): void {
     this.loadDoctors();
@@ -36,10 +39,11 @@ export class DoctorAdminComponent implements OnInit {
       next: (data: Doctor[]) => {
      
         this.doctors = [...data];
-        this.cdr.markForCheck();
+        
       },
       error: (err) => {
         console.error(' Error loading doctors:', err);
+        this.toast.show('loading failed :' + err, 'danger')
       },
       complete: () => {
         console.log(' API call completed');
@@ -59,21 +63,30 @@ export class DoctorAdminComponent implements OnInit {
     this.doctorService.createDoctor(this.newDoctor)
       .subscribe({
         next: () => {
-
+          this.toast.show('Created successfully', 'success');
           this.loadDoctors();
           this.resetForm();
            
         },
         error: (errors: string[]) => {
-        
-          this.validationErrors = errors; this.cdr.detectChanges();
+          this.toast.show('Update failed :' + errors, 'danger')
+          this.validationErrors = errors;  
         }
       });
   }
 
   deleteDoctor(id: string): void {
-    this.doctorService.deleteDoctor(id)
-      .subscribe(() => this.loadDoctors());
+    this.confirmService.confirm('Delete this record?')
+      .then(result => {
+        if (!result) return;
+
+        this.doctorService.deleteDoctor(id)
+          .subscribe(() => {
+            this.toast.show('Deleted successfully', 'success');
+            this.loadDoctors();
+          });
+      });
+     
   }
 
   updateDoctor(doctor: Doctor): void {
@@ -85,11 +98,12 @@ export class DoctorAdminComponent implements OnInit {
 
     this.doctorService.updateDoctor(doctor).subscribe({
       next: () => {
+        this.toast.show('Updated successfully', 'success');
         this.loadDoctors();
         this.cancelEdit();
       },
       error: (err) => {
-        console.error(' Error updating doctor:', err);
+        this.toast.show(' failed :' + err, 'danger')
         // show server-side validation errors if present
         this.validationErrors = [err?.error || 'Failed to update doctor'];
       }

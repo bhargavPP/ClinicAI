@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, provideZoneChangeDetection } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -11,8 +11,11 @@ import { DoctorAdminComponent } from './features/admin/doctor-admin/doctor-admin
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { DoctorAvailabilityComponent } from './features/availability/doctor-availability/doctor-availability.component';
+import { ToastComponent } from './shared/toast/toast.component';
+import { ConfirmComponent } from './shared/confirm/confirm.component';
 @NgModule({
-  declarations: [],
+  declarations: [ ],
   imports: [
     BrowserModule,
     CommonModule,
@@ -23,10 +26,12 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
     AppComponent,
     DoctorListComponent,
     BookAppointmentComponent,
-    DoctorAdminComponent
+    DoctorAdminComponent,
+    DoctorAvailabilityComponent,
+    ToastComponent, ConfirmComponent
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }, provideZoneChangeDetection({ eventCoalescing: true })
   ],
   bootstrap: [AppComponent]
 })

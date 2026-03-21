@@ -55,17 +55,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
- 
 // Only enable HTTPS redirection in non-development environments to avoid
 // redirecting HTTP preflight (OPTIONS) requests during local development.
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
- 
-
-
-
 // ✅ 2. CORS BEFORE auth and endpoints
 app.UseCors("AllowAngular");
 

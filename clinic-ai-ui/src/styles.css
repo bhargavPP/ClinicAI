@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+/* Smooth row look */
+.table-row {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+  /* Hover effect */
+  .table-row:hover {
+    background-color: #eef1f4;
+  }
+
+/* Table spacing */
+.table td, .table th {
+  vertical-align: middle;
+  padding: 14px;
+}
+
+/* Buttons spacing */
+.btn-sm {
+  border-radius: 6px;
+}
+.toast-container {
+  z-index: 9999;
+}

@@ -77,7 +77,8 @@
 
           "defaultConfiguration": "development",
           "options": {
-            "port": 51912
+            "port": 51912,
+            "liveReload": true
           }
         },
         "extract-i18n": {

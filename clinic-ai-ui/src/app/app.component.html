@@ -6,10 +6,13 @@
       <a class="nav-link" routerLink="/doctors">Doctors</a>
       <a class="nav-link" routerLink="/book">Book Appointment</a>
       <a class="nav-link" routerLink="/admin">Admin</a>
+      <a class="nav-link" routerLink="/availability">Availability</a>
     </div>
   </div>
 </nav>
 
 <div class="container mt-4">
+  <app-toast></app-toast>
+  <app-confirm></app-confirm>
   <router-outlet></router-outlet>
 </div>

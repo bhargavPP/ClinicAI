@@ -1,0 +1,121 @@
+<div class="container mt-4">
+
+  <div *ngIf="validationErrors.length" class="alert alert-danger">
+    <ul>
+      <li *ngFor="let e of validationErrors">{{ e }}</li>
+    </ul>
+  </div>
+
+  <select class="form-select mb-3" [(ngModel)]="model.doctorId">
+    <option value="">Select Doctor</option>
+    <option *ngFor="let doctor of doctors" [value]="doctor.id">
+      {{ doctor.name }}
+    </option>
+  </select>
+
+  <input type="date" class="form-control mb-2" [(ngModel)]="model.date" />
+  <input type="time" class="form-control mb-2" [(ngModel)]="model.startTime" />
+  <input type="time" class="form-control mb-2" [(ngModel)]="model.endTime" />
+
+  <!-- ✅ FIX: save() not Save() -->
+  <button class="btn btn-primary" (click)="save()">Save Availability</button>
+
+</div>
+<hr />
+
+<div class="row align-items-end mb-3">
+
+  <!-- Doctor -->
+  <div class="col-md-3">
+    <label class="form-label">Doctor</label>
+    <select class="form-select" [(ngModel)]="filters.doctorId">
+      <option value="">All</option>
+      <option *ngFor="let doctor of doctors" [value]="doctor.id">
+        {{ doctor.name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- From Date -->
+  <div class="col-md-3">
+    <label class="form-label">From</label>
+    <input type="date" class="form-control" [(ngModel)]="filters.fromDate" />
+  </div>
+
+  <!-- To Date -->
+  <div class="col-md-3">
+    <label class="form-label">To</label>
+    <input type="date" class="form-control" [(ngModel)]="filters.toDate" />
+  </div>
+
+  <!-- Button -->
+  <div class="col-md-3">
+    <button class="btn btn-secondary w-50" (click)="loadAvailabilities()">
+      Search
+    </button>
+  </div>
+
+</div>
+<div class="container mt-4">
+
+  <div class="card shadow-sm border-0">
+
+    <!-- 🔵 DARK HEADER -->
+    <div class="card-header bg-dark text-white rounded-top">
+      <h5 class="mb-0">Doctor Availability</h5>
+    </div>
+
+    <div class="card-body p-3">
+
+      <!-- TABLE -->
+      <div class="table-responsive">
+        <table class="table align-middle table-hover">
+
+          <!-- HEADER -->
+          <thead class="table-light">
+            <tr>
+              <th>Doctor</th>
+              <th>Date</th>
+              <th>Start</th>
+              <th>End</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+
+          <!-- BODY -->
+          <tbody>
+            <tr *ngFor="let a of availabilities" class="table-row">
+
+              <td class="fw-semibold">{{ a.doctorName }}</td>
+
+              <td>{{ a.date | date:'yyyy-MM-dd' }}</td>
+
+              <td>{{ a.startTime }}</td>
+
+              <td>{{ a.endTime }}</td>
+
+              <td class="text-center">
+
+                <button class="btn btn-secondary btn-sm me-2 px-3"
+                        (click)="edit(a)">
+                  Edit
+                </button>
+
+                <button class="btn btn-danger btn-sm px-3"
+                        (click)="delete(a.id)">
+                  Delete
+                </button>
+
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
