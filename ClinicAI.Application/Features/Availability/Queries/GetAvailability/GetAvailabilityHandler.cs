@@ -41,7 +41,8 @@ namespace ClinicAI.Application.Features.Availability.Queries.GetAvailability
                     DoctorName = x.Doctor.Name,
                     Date = x.Date,
                     StartTime = x.StartTime,
-                    EndTime = x.EndTime
+                    EndTime = x.EndTime,
+                    IsAvailable = x.IsAvailable
                 })
                 .ToListAsync(cancellationToken);
         }

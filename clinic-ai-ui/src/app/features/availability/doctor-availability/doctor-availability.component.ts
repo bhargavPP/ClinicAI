@@ -19,7 +19,8 @@ export class DoctorAvailabilityComponent implements OnInit {
     doctorId: '',
     date: '',
     startTime: '',
-    endTime: ''
+    endTime: '',
+    isAvailable:true
   };
   filters: any = {
     doctorId: '',
@@ -68,7 +69,8 @@ export class DoctorAvailabilityComponent implements OnInit {
       id: this.editingId,
       ...this.model,
       startTime: this.model.startTime + ':00',
-      endTime: this.model.endTime + ':00'
+      endTime: this.model.endTime + ':00',
+      isAvailable:this.model.isAvailable
     };
 
     // ✅ UPDATE MODE
@@ -80,7 +82,10 @@ export class DoctorAvailabilityComponent implements OnInit {
             this.resetForm();
             this.loadAvailabilities();
           },
-          error: (err) => this.toast.show('Update failed :'+err, 'danger')
+          error: (err) => {
+            console.log(err);
+            this.toast.show('Updated Doctor Info failed :' + err, 'danger')
+          }
         });
 
     } else {
@@ -97,7 +102,8 @@ export class DoctorAvailabilityComponent implements OnInit {
             if (err.status === 400 && err.error?.errors) {
               this.validationErrors = Object.values(err.error.errors).flat() as string[];
             } else {
-              this.toast.show('Update failed', 'danger');
+              console.log(err);
+              this.toast.show(err, 'danger');
             }
           }
         });
@@ -113,7 +119,8 @@ export class DoctorAvailabilityComponent implements OnInit {
       doctorId: a.doctorId,
       date: a.date ? a.date.split('T')[0] : '',
       startTime: a.startTime?.substring(0, 5),
-      endTime: a.endTime?.substring(0, 5)
+      endTime: a.endTime?.substring(0, 5),
+      isAvailable: a.isAvailable
     };
   }
 
@@ -161,7 +168,8 @@ export class DoctorAvailabilityComponent implements OnInit {
       doctorId: '',
       date: '',
       startTime: '',
-      endTime: ''
+      endTime: '',
+      isAvailable: true
     };
 
     this.editMode = false;

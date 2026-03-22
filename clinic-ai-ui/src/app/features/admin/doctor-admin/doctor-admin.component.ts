@@ -69,7 +69,8 @@ export class DoctorAdminComponent implements OnInit {
            
         },
         error: (errors: string[]) => {
-          this.toast.show('Update failed :' + errors, 'danger')
+        
+          this.toast.show('Created failed :' + errors, 'danger')
           this.validationErrors = errors;  
         }
       });
