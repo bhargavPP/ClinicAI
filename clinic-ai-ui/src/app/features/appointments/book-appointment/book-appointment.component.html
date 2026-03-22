@@ -1,68 +1,119 @@
-<div class="card shadow">
-  <div class="card-header bg-primary text-white">
-    <h4>Book Appointment</h4>
+<div class="card shadow-sm border-0 mb-3">
+
+  <!-- HEADER -->
+  <div class="card-header bg-dark text-white">
+    <div class="fw-semibold">Book Appointment</div>
+    <small class="text-light opacity-75">Home / Appointment / Book</small>
   </div>
 
-  <div class="card-body">
+  <!-- BODY -->
+  <div class="card-body py-2">
+
     <form (ngSubmit)="submit()">
 
-      <div class="mb-3">
-        <label class="form-label">Doctor</label>
-        <select class="form-select" [(ngModel)]="model.doctorId" name="doctorId" required>
-          <option value="">Select Doctor</option>
-          <option *ngFor="let d of doctors" [value]="d.id">
-            {{ d.name }} - {{ d.specialization }}
-          </option>
-        </select>
+      <!-- ROW 1 -->
+      <div class="row g-2 align-items-end">
+
+        <div class="col-md-3">
+          <label class="small text-muted">Doctor</label>
+          <select class="form-select form-select-sm"
+                  [(ngModel)]="model.doctorId"
+                  name="doctorId"
+                  required>
+            <option value="">Doctor</option>
+            <option *ngFor="let d of doctors" [value]="d.id">
+              {{ d.name }} - {{ d.specialization }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="small text-muted">Patient Name</label>
+          <input class="form-control form-control-sm"
+                 placeholder="Patient Name"
+                 [(ngModel)]="model.patientName"
+                 name="patientName"
+                 required />
+        </div>
+
+        <div class="col-md-3">
+          <label class="small text-muted">Patient Email</label>
+          <input class="form-control form-control-sm"
+                 placeholder="Email"
+                 [(ngModel)]="model.email"
+                 name="email"
+                 required />
+        </div>
+
+        <div class="col-md-3">
+          <label class="small text-muted">Patient Phone</label>
+          <input class="form-control form-control-sm"
+                 placeholder="Phone"
+                 [(ngModel)]="model.phone"
+                 name="phone"
+                 required />
+        </div>
+
       </div>
 
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label>Name</label>
-          <input class="form-control" [(ngModel)]="model.patientName" name="patientName" required />
+      <!-- ROW 2 -->
+      <div class="row g-2 align-items-end mt-1">
+
+        <div class="col-md-3">
+          <label class="small text-muted">Date of Birth</label>
+          <input type="date"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="model.dateOfBirth"
+                 name="dateOfBirth" [max]="today"/>
         </div>
 
-        <div class="col-md-4 mb-3">
-          <label>Email</label>
-          <input class="form-control" [(ngModel)]="model.email" name="email" required />
+        <div class="col-md-3">
+          <label class="small text-muted">Appointment Date</label>
+          <input type="date"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="model.appointmentDate"
+                 name="appointmentDate"
+                 required [min]="today"/>
         </div>
 
-        <div class="col-md-4 mb-3">
-          <label>Phone</label>
-          <input class="form-control" [(ngModel)]="model.phone" name="phone" required />
+        <div class="col-md-2">
+          <label class="small text-muted">StartTime</label>
+          <input type="time"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="model.startTime"
+                 name="startTime"
+                 required />
+        </div>
+
+        <div class="col-md-2">
+          <label class="small text-muted">EndTime</label>
+          <input type="time"
+                 class="form-control form-control-sm"
+                 [(ngModel)]="model.endTime"
+                 name="endTime"
+                 required />
+        </div>
+
+        <div class="col-md-2">
+          <button class="btn btn-primary btn-sm w-100">
+            Book
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ROW 3 (Notes) -->
+      <div class="row mt-2">
+        <div class="col-md-12">
+          <textarea class="form-control form-control-sm"
+                    placeholder="Notes"
+                    [(ngModel)]="model.notes"
+                    name="notes"></textarea>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label>Date of Birth</label>
-          <input type="date" class="form-control" [(ngModel)]="model.dateOfBirth" name="dateOfBirth" />
-        </div>
-
-        <div class="col-md-4 mb-3">
-          <label>Appointment Date</label>
-          <input type="date" class="form-control" [(ngModel)]="model.appointmentDate" name="appointmentDate" required />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label>Start Time</label>
-          <input type="time" class="form-control" [(ngModel)]="model.startTime" name="startTime" required />
-        </div>
-
-        <div class="col-md-4 mb-3">
-          <label>End Time</label>
-          <input type="time" class="form-control" [(ngModel)]="model.endTime" name="endTime" required />
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label>Notes</label>
-        <textarea class="form-control" [(ngModel)]="model.notes" name="notes"></textarea>
-      </div>
-
-      <button class="btn btn-success w-100">Book Appointment</button>
     </form>
+
   </div>
+
 </div>

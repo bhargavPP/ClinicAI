@@ -19,6 +19,50 @@
 .btn-sm {
   border-radius: 6px;
 }
+
 .toast-container {
   z-index: 9999;
+}
+
+ 
+.nav-link {
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+  .nav-link.active {
+    background-color: #0d6efd;
+    color: white !important;
+  }
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  height: 100%;
+  background-color: #212529;
+  transition: all 0.3s ease;
+}
+
+  /* COLLAPSED STATE */
+  .sidebar.collapsed {
+    width: 0;
+    min-width: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+/* NAV LINKS */
+.nav-link {
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+  .nav-link.active {
+    background-color: #0d6efd;
+    color: white !important;
+  }
+
+/* CONTENT */
+.content {
+  transition: all 0.3s ease;
 }

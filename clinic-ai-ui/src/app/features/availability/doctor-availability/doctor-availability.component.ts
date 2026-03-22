@@ -33,6 +33,8 @@ export class DoctorAvailabilityComponent implements OnInit {
 
   validationErrors: string[] = [];
 
+  minDate: string = '';
+
   constructor(
     private doctorService: DoctorService,
     private availabilityService: AvailabilityService,
@@ -54,6 +56,10 @@ export class DoctorAvailabilityComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.setDefaultDates();
+
+    this.minDate = this.formatDate(new Date());
+
     this.doctorService.getDoctors()
       .subscribe(res => this.doctors = res);
 
@@ -171,9 +177,22 @@ export class DoctorAvailabilityComponent implements OnInit {
       endTime: '',
       isAvailable: true
     };
-
+    this.setDefaultDates();
     this.editMode = false;
     this.editingId = null;
     this.validationErrors = [];
+  }
+  private setDefaultDates() {
+    const today = new Date();
+    const nextWeek = new Date();
+
+    nextWeek.setDate(today.getDate() + 7);
+
+    this.filters.fromDate = this.formatDate(today);
+    this.filters.toDate = this.formatDate(nextWeek);
+  }
+
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
   }
 }

@@ -13,7 +13,7 @@ import { PatientService } from '../../../core/services/patient.service';
 
 })
 export class BookAppointmentComponent implements OnInit{
-
+  today: string = '';
   doctors: Doctor[] = [];
   model = {
      doctorId: '',
@@ -34,6 +34,8 @@ export class BookAppointmentComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
+    this.today = this.formatDate(new Date());
+  
     this.doctorService.getDoctors().subscribe((data: Doctor[]) => {
       this.doctors = data;
       });
@@ -67,5 +69,10 @@ export class BookAppointmentComponent implements OnInit{
     },
     error: err => alert(err.error)
   });
-}
+
+
+  }
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
 }
