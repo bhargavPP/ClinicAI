@@ -1,9 +1,23 @@
 <div class="card shadow-sm border-0 mb-3">
 
   <!-- HEADER -->
-  <div class="card-header bg-dark text-white">
-    <div class="fw-semibold">Book Appointment</div>
-    <small class="text-light opacity-75">Home / Appointment / Book</small>
+  <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+    <div>
+      <div class="fw-semibold">
+        {{ editMode ? 'Edit Appointment' : 'Book Appointment' }}
+      </div>
+      <small class="text-light opacity-75">
+        Home / Appointment / Book
+      </small>
+    </div>
+
+    <!-- Cancel Edit -->
+    <button *ngIf="editMode"
+            class="btn btn-sm btn-light"
+            type="button"
+            (click)="resetForm()">
+      Cancel
+    </button>
   </div>
 
   <!-- BODY -->
@@ -14,44 +28,41 @@
       <!-- ROW 1 -->
       <div class="row g-2 align-items-end">
 
+        <!-- Doctor -->
         <div class="col-md-3">
-          <label class="small text-muted">Doctor</label>
           <select class="form-select form-select-sm"
                   [(ngModel)]="model.doctorId"
                   name="doctorId"
-                  required>
+                  (change)="loadSlots()">
             <option value="">Doctor</option>
-            <option *ngFor="let d of doctors" [value]="d.id">
+            <option *ngFor="let d of doctors" [value]="d.id.toString()">
               {{ d.name }} - {{ d.specialization }}
             </option>
           </select>
         </div>
 
+        <!-- Patient Name -->
         <div class="col-md-3">
-          <label class="small text-muted">Patient Name</label>
           <input class="form-control form-control-sm"
                  placeholder="Patient Name"
                  [(ngModel)]="model.patientName"
-                 name="patientName"
-                 required />
+                 name="patientName" />
         </div>
 
+        <!-- Email -->
         <div class="col-md-3">
-          <label class="small text-muted">Patient Email</label>
           <input class="form-control form-control-sm"
                  placeholder="Email"
                  [(ngModel)]="model.email"
-                 name="email"
-                 required />
+                 name="email" />
         </div>
 
+        <!-- Phone -->
         <div class="col-md-3">
-          <label class="small text-muted">Patient Phone</label>
           <input class="form-control form-control-sm"
                  placeholder="Phone"
                  [(ngModel)]="model.phone"
-                 name="phone"
-                 required />
+                 name="phone" />
         </div>
 
       </div>
@@ -59,50 +70,47 @@
       <!-- ROW 2 -->
       <div class="row g-2 align-items-end mt-1">
 
+        <!-- DOB -->
         <div class="col-md-3">
-          <label class="small text-muted">Date of Birth</label>
           <input type="date"
                  class="form-control form-control-sm"
                  [(ngModel)]="model.dateOfBirth"
-                 name="dateOfBirth" [max]="today"/>
+                 name="dateOfBirth"
+                 [max]="today" />
         </div>
 
+        <!-- Appointment Date -->
         <div class="col-md-3">
-          <label class="small text-muted">Appointment Date</label>
           <input type="date"
                  class="form-control form-control-sm"
                  [(ngModel)]="model.appointmentDate"
                  name="appointmentDate"
-                 required [min]="today"/>
+                 [min]="today"
+                 (change)="loadSlots()" />
         </div>
 
-        <div class="col-md-2">
-          <label class="small text-muted">StartTime</label>
-          <input type="time"
-                 class="form-control form-control-sm"
-                 [(ngModel)]="model.startTime"
-                 name="startTime"
-                 required />
+        <!-- Slots -->
+        <div class="col-md-3">
+          <select class="form-select form-select-sm"
+                  [(ngModel)]="model.startTime"
+                  name="startTime">
+            <option value="">Select Slot</option>
+            <option *ngFor="let s of slots" [value]="s">
+              {{ formatTime(s) }}
+            </option>
+          </select>
         </div>
 
-        <div class="col-md-2">
-          <label class="small text-muted">EndTime</label>
-          <input type="time"
-                 class="form-control form-control-sm"
-                 [(ngModel)]="model.endTime"
-                 name="endTime"
-                 required />
-        </div>
-
-        <div class="col-md-2">
+        <!-- Submit -->
+        <div class="col-md-3 d-flex">
           <button class="btn btn-primary btn-sm w-100">
-            Book
+            {{ editMode ? 'Update' : 'Book Appointment' }}
           </button>
         </div>
 
       </div>
 
-      <!-- ROW 3 (Notes) -->
+      <!-- Notes -->
       <div class="row mt-2">
         <div class="col-md-12">
           <textarea class="form-control form-control-sm"
@@ -113,6 +121,99 @@
       </div>
 
     </form>
+
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- APPOINTMENTS LIST -->
+<!-- ========================= -->
+
+<div class="container-fluid mt-3 px-1">
+
+  <div class="card shadow-sm border-0 w-100">
+
+    <div class="card-header bg-dark text-white d-flex justify-content-between">
+      <span>Your Appointments</span>
+    </div>
+
+    <div class="card-body p-2">
+
+      <div class="table-responsive">
+
+        <table class="table table-sm align-middle table-hover mb-0">
+
+          <thead class="table-light">
+            <tr>
+              <th>Doctor</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let a of appointments"
+                [ngClass]="{
+        'table-secondary': isPast(a),
+        'table-success': !isPast(a)
+      }">
+
+              <td class="fw-semibold">{{ a.doctorName }}</td>
+
+              <td>{{ a.date | date:'yyyy-MM-dd' }}</td>
+
+              <td>
+                {{ formatTime(a.startTime) }} -
+                {{ formatTime(a.endTime) }}
+              </td>
+
+              <td>
+                <span class="badge bg-success" *ngIf="a.status === 'Scheduled'">
+                  Scheduled
+                </span>
+
+                <span class="badge bg-danger" *ngIf="a.status === 'Cancelled'">
+                  Cancelled
+                </span>
+              </td>
+
+              <!-- ACTION -->
+              <td class="text-center">
+
+                <!-- Edit -->
+                <button class="btn btn-secondary btn-sm me-2"
+                        (click)="editAppointment(a)"
+                        [disabled]="isPast(a) || a.status !== 'Scheduled'">
+                  Edit
+                </button>
+
+                <!-- Cancel -->
+                <button class="btn btn-danger btn-sm"
+                        (click)="cancelAppointment(a.id)"
+                        [disabled]="a.status === 'Cancelled'">
+                  Cancel
+                </button>
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="appointments.length === 0"
+           class="text-center text-muted py-3">
+        No appointments found
+      </div>
+
+    </div>
 
   </div>
 

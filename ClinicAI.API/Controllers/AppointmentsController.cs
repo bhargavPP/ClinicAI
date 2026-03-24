@@ -1,6 +1,8 @@
-﻿using ClinicAI.Application.Features.Appointments.Commands.CreateAppointment;
+﻿using ClinicAI.Application.Features.Appointments.Commands.CancelAppointment;
+using ClinicAI.Application.Features.Appointments.Commands.CreateAppointment;
+using ClinicAI.Application.Features.Appointments.Queries.GetAppointments;
+using ClinicAI.Application.Features.Appointments.Queries.GetDoctorSlots;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAI.API.Controllers
@@ -12,14 +14,46 @@ namespace ClinicAI.API.Controllers
         private readonly IMediator _mediator;
         public AppointmentsController(IMediator mediator)
         {
-            mediator = _mediator;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(_mediator));
         }
 
         [HttpPost]
-        public async  Task<IActionResult> Create(CreateAppointmentCommand command)
+        public async Task<IActionResult> Create(CreateAppointmentCommand command)
         {
-            var id = await _mediator.Send(command);
-            return Ok(id);
+            var result = await _mediator.Send(command);
+            if (!result.IsSuccess)
+                return BadRequest(result);  
+            return Ok(result);
         }
+
+        [HttpGet("slots")]
+        public async Task<IActionResult> GetSlots(Guid doctorId, DateTime date)
+        {
+            var result = await _mediator.Send(new GetDoctorSlotsQuery
+            {
+                DoctorId = doctorId,
+                Date = date
+            });
+
+            return Ok(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAppointments([FromQuery] Guid? patientId)
+        {
+            var result = await _mediator.Send(new GetAppointmentsQuery
+            {
+                PatientId = patientId
+            });
+            return Ok(result);
+        }
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> Cancel(Guid id)
+        {
+            var result = await _mediator.Send(new CancelAppointmentCommand { Id = id });
+            if(!result.IsSuccess)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
     }
 }

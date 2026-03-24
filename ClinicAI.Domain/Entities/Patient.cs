@@ -17,8 +17,8 @@ namespace ClinicAI.Domain.Entities
         public DateTime DateOfBirth { get; set; }
 
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-        public string RelationshipToUser { get; set; } = null!;
-        public Guid UserId { get; set; }
+        public string? RelationshipToUser { get; set; } = null;
+        public Guid? UserId { get; set; } 
         public User User { get; set; } = null!;
     }
 }

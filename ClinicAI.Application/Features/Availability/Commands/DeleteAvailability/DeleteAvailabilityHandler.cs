@@ -1,9 +1,6 @@
 ﻿using ClinicAI.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClinicAI.Application.Features.Availability.Commands.DeleteAvailability
 {

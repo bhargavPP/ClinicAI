@@ -15,9 +15,6 @@ namespace ClinicAI.Application.Features.Appointments.Commands.CreateAppointment
             RuleFor(x=>x.AppointmentDate)
                 .GreaterThanOrEqualTo(DateTime.Today)
                 .WithMessage("Appointment date must be today or in the future.");
-            RuleFor(x=>x.StartTime)
-                .LessThan(x=>x.EndTime)
-                .WithMessage("Start time must be before end time.");
 
         }
     }

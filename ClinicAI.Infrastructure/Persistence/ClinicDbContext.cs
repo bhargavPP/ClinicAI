@@ -67,6 +67,7 @@ namespace ClinicAI.Infrastructure.Persistence
                 entity.HasMany(u => u.Patients)
                       .WithOne(p => p.User)
                       .HasForeignKey(p => p.UserId)
+                      .IsRequired(false)
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
