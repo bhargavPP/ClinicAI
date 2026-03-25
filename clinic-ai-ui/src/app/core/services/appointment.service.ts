@@ -27,10 +27,14 @@ export class AppointmentService {
   }
   getAppointments(patientId: string) {
   
-      var url = '';
-      if (!patientId) {
-        url = `${this.apiUrl}?patientId=${patientId}`;
-      }
+    let url = this.apiUrl;
+
+    if (patientId) {
+      url = `${this.apiUrl}?patientId=${patientId}`;
+    }
+
+    console.log('patientId:', patientId, 'url:', url);
+
       return this.http.get<any[]>(url);
    
   }

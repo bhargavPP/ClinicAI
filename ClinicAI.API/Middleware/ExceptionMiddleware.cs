@@ -14,7 +14,7 @@ namespace ClinicAI.API.Middleware
             _next = next;
         }
 
-       
+
         public async Task InvokeAsync(HttpContext context)
         {
             try
@@ -32,14 +32,19 @@ namespace ClinicAI.API.Middleware
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
                     // Group errors by property name
-                    var errors = vex.Errors
-                        .GroupBy(e => string.IsNullOrWhiteSpace(e.PropertyName) ? "" : e.PropertyName)
-                        .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+                    var errorList = vex.Errors
+                                         .Select(e => e.ErrorMessage)
+                                         .Distinct()
+                                         .ToList();
 
-                    await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new
+                    var response = new
                     {
-                        errors
-                    }));
+                        isSuccess = false,
+                        message = errorList.FirstOrDefault(),
+                        errors = errorList
+                    };
+
+                    await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));
                     return;
                 }
 

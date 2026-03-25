@@ -1,4 +1,5 @@
 ﻿using ClinicAI.Application.Features.Patients.Commands.CreatePatient;
+using ClinicAI.Application.Features.Patients.Queries.GetPatients;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,12 @@ namespace ClinicAI.API.Controllers
         {
             var id = await _mediator.Send(command);
             return Ok(id);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetPatients()
+        {
+            var result = await _mediator.Send(new GetPatientsQuery());
+            return Ok(result);
         }
     }
 }

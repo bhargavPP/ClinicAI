@@ -1,5 +1,6 @@
 ﻿using ClinicAI.Application.Features.Appointments.Commands.CancelAppointment;
 using ClinicAI.Application.Features.Appointments.Commands.CreateAppointment;
+using ClinicAI.Application.Features.Appointments.Commands.UpdateAppointment;
 using ClinicAI.Application.Features.Appointments.Queries.GetAppointments;
 using ClinicAI.Application.Features.Appointments.Queries.GetDoctorSlots;
 using MediatR;
@@ -21,8 +22,8 @@ namespace ClinicAI.API.Controllers
         public async Task<IActionResult> Create(CreateAppointmentCommand command)
         {
             var result = await _mediator.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result);  
+            //if (!result.IsSuccess)
+            //    return BadRequest(result);
             return Ok(result);
         }
 
@@ -50,10 +51,19 @@ namespace ClinicAI.API.Controllers
         public async Task<IActionResult> Cancel(Guid id)
         {
             var result = await _mediator.Send(new CancelAppointmentCommand { Id = id });
-            if(!result.IsSuccess)
-                return BadRequest(result);
+            //if (!result.IsSuccess)
+            //    return BadRequest(result);
             return Ok(result);
         }
-
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, UpdateAppointmentCommand command)
+        {
+            if (id != command.Id)
+                return BadRequest("Invalid request");
+            var result = await _mediator.Send(command);
+            //if (!result.IsSuccess)
+            //    return BadRequest(result);
+            return Ok(result);
+        }
     }
 }

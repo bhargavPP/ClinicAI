@@ -32,6 +32,7 @@ namespace ClinicAI.Application.Features.Appointments.Queries.GetAppointments
                 EndTime = a.EndTime,
                 Notes = a.Notes,
                 Status = a.Status,
+                PatientId= a.PatientId.ToString(),
                 PatientName = a.Patient.Name,
                 Email = a.Patient.Email,
                 Phone = a.Patient.Phone,

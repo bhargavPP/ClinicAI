@@ -11,7 +11,6 @@
       </small>
     </div>
 
-    <!-- Cancel Edit -->
     <button *ngIf="editMode"
             class="btn btn-sm btn-light"
             type="button"
@@ -23,7 +22,7 @@
   <!-- BODY -->
   <div class="card-body py-2">
 
-    <form (ngSubmit)="submit()">
+    <form [formGroup]="form" (ngSubmit)="submit()">
 
       <!-- ROW 1 -->
       <div class="row g-2 align-items-end">
@@ -31,38 +30,41 @@
         <!-- Doctor -->
         <div class="col-md-3">
           <select class="form-select form-select-sm"
-                  [(ngModel)]="model.doctorId"
-                  name="doctorId"
+                  formControlName="doctorId"
                   (change)="loadSlots()">
             <option value="">Doctor</option>
-            <option *ngFor="let d of doctors" [value]="d.id.toString()">
+            <option *ngFor="let d of doctors" [value]="d.id">
               {{ d.name }} - {{ d.specialization }}
+            </option>
+          </select>
+        </div>
+
+        <!-- ✅ Patient Dropdown -->
+        <div class="col-md-3">
+          <select class="form-select form-select-sm"
+                  formControlName="patientId"
+               >
+            <option value="">Select Patient</option>
+            <option *ngFor="let p of patients" [ngValue]="p">
+              {{ p.name }} ({{ p.phone }})
             </option>
           </select>
         </div>
 
         <!-- Patient Name -->
         <div class="col-md-3">
-          <input class="form-control form-control-sm"
+          <input class="form-control form-control-sm bg-light"
                  placeholder="Patient Name"
-                 [(ngModel)]="model.patientName"
-                 name="patientName" />
+                 formControlName="patientName"
+                 readonly />
         </div>
 
         <!-- Email -->
         <div class="col-md-3">
-          <input class="form-control form-control-sm"
+          <input class="form-control form-control-sm bg-light"
                  placeholder="Email"
-                 [(ngModel)]="model.email"
-                 name="email" />
-        </div>
-
-        <!-- Phone -->
-        <div class="col-md-3">
-          <input class="form-control form-control-sm"
-                 placeholder="Phone"
-                 [(ngModel)]="model.phone"
-                 name="phone" />
+                 formControlName="email"
+                 readonly />
         </div>
 
       </div>
@@ -70,12 +72,20 @@
       <!-- ROW 2 -->
       <div class="row g-2 align-items-end mt-1">
 
+        <!-- Phone -->
+        <div class="col-md-3">
+          <input class="form-control form-control-sm bg-light"
+                 placeholder="Phone"
+                 formControlName="phone"
+                 readonly />
+        </div>
+
         <!-- DOB -->
         <div class="col-md-3">
           <input type="date"
-                 class="form-control form-control-sm"
-                 [(ngModel)]="model.dateOfBirth"
-                 name="dateOfBirth"
+                 class="form-control form-control-sm bg-light"
+                 formControlName="dateOfBirth"
+                 readonly
                  [max]="today" />
         </div>
 
@@ -83,8 +93,7 @@
         <div class="col-md-3">
           <input type="date"
                  class="form-control form-control-sm"
-                 [(ngModel)]="model.appointmentDate"
-                 name="appointmentDate"
+                 formControlName="appointmentDate"
                  [min]="today"
                  (change)="loadSlots()" />
         </div>
@@ -92,8 +101,7 @@
         <!-- Slots -->
         <div class="col-md-3">
           <select class="form-select form-select-sm"
-                  [(ngModel)]="model.startTime"
-                  name="startTime">
+                  formControlName="startTime">
             <option value="">Select Slot</option>
             <option *ngFor="let s of slots" [value]="s">
               {{ formatTime(s) }}
@@ -101,23 +109,25 @@
           </select>
         </div>
 
+      </div>
+
+      <!-- ROW 3 -->
+      <div class="row mt-2">
+
+        <!-- Notes -->
+        <div class="col-md-9">
+          <textarea class="form-control form-control-sm"
+                    placeholder="Notes"
+                    formControlName="notes"></textarea>
+        </div>
+
         <!-- Submit -->
-        <div class="col-md-3 d-flex">
+        <div class="col-md-3 d-flex align-items-end">
           <button class="btn btn-primary btn-sm w-100">
             {{ editMode ? 'Update' : 'Book Appointment' }}
           </button>
         </div>
 
-      </div>
-
-      <!-- Notes -->
-      <div class="row mt-2">
-        <div class="col-md-12">
-          <textarea class="form-control form-control-sm"
-                    placeholder="Notes"
-                    [(ngModel)]="model.notes"
-                    name="notes"></textarea>
-        </div>
       </div>
 
     </form>
@@ -146,6 +156,10 @@
           <thead class="table-light">
             <tr>
               <th>Doctor</th>
+              <th>Patient</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>DOB</th>
               <th>Date</th>
               <th>Time</th>
               <th>Status</th>
@@ -156,13 +170,13 @@
           <tbody>
 
             <tr *ngFor="let a of appointments"
-                [ngClass]="{
-        'table-secondary': isPast(a),
-        'table-success': !isPast(a)
-      }">
+                [ngClass]="{'table-secondary': isPast(a), 'table-success': !isPast(a) }">
 
               <td class="fw-semibold">{{ a.doctorName }}</td>
-
+              <td>{{ a.patientName }}</td>
+              <td>{{ a.email }}</td>
+              <td>{{ a.phone }}</td>
+              <td>{{ a.dateOfBirth | date:'yyyy-MM-dd' }}</td>
               <td>{{ a.date | date:'yyyy-MM-dd' }}</td>
 
               <td>
