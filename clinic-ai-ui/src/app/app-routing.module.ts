@@ -4,12 +4,24 @@ import { DoctorListComponent } from './features/doctors/doctor-list/doctor-list.
 import { BookAppointmentComponent } from './features/appointments/book-appointment/book-appointment.component';
 import { DoctorAdminComponent } from './features/admin/doctor-admin/doctor-admin.component';
 import { DoctorAvailabilityComponent } from './features/availability/doctor-availability/doctor-availability.component';
+import { authGuard } from './core/guard/auth-guard';
+import { loginGuard } from './core/guard/login-guard';         // ← new guard (step 2)
+import { AuthModalComponent } from './features/users/auth-modal/auth-modal.component';
 
-const routes: Routes = [{ path: 'doctors', component: DoctorListComponent },
-                        { path: 'book', component: BookAppointmentComponent },
-                        { path: 'admin', component: DoctorAdminComponent },
-                        { path: 'availability', component: DoctorAvailabilityComponent },
-                        { path: '', redirectTo: 'doctors', pathMatch: 'full' }];
+const routes: Routes = [
+  // Login page — redirect away if already logged in
+  { path: 'login', component: AuthModalComponent, canActivate: [loginGuard] },
+
+  // Protected routes
+  { path: 'doctors', component: DoctorListComponent, canActivate: [authGuard] },
+  { path: 'book', component: BookAppointmentComponent, canActivate: [authGuard] },
+  { path: 'admin', component: DoctorAdminComponent, canActivate: [authGuard] },
+  { path: 'availability', component: DoctorAvailabilityComponent, canActivate: [authGuard] },
+
+  // Default redirect
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

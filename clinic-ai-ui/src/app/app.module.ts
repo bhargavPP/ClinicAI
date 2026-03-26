@@ -1,21 +1,23 @@
 import { NgModule, provideZoneChangeDetection } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DoctorListComponent } from './features/doctors/doctor-list/doctor-list.component';
 import { BookAppointmentComponent } from './features/appointments/book-appointment/book-appointment.component';
 import { FormsModule } from '@angular/forms';
 import { DoctorAdminComponent } from './features/admin/doctor-admin/doctor-admin.component';
-
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { DoctorAvailabilityComponent } from './features/availability/doctor-availability/doctor-availability.component';
 import { ToastComponent } from './shared/toast/toast.component';
 import { ConfirmComponent } from './shared/confirm/confirm.component';
+import { AuthModalComponent } from './features/users/auth-modal/auth-modal.component';
 @NgModule({
-  declarations: [ ],
+  declarations: [ 
+      
+  ],
   imports: [
     BrowserModule,
     CommonModule,
@@ -28,7 +30,7 @@ import { ConfirmComponent } from './shared/confirm/confirm.component';
     BookAppointmentComponent,
     DoctorAdminComponent,
     DoctorAvailabilityComponent,
-    ToastComponent, ConfirmComponent
+    ToastComponent, ConfirmComponent, ReactiveFormsModule, AuthModalComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }, provideZoneChangeDetection({ eventCoalescing: true })

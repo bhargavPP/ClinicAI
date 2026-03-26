@@ -1,0 +1,182 @@
+<!-- Full page centered layout -->
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="width: 100%; max-width: 460px;">
+
+    <!-- Header -->
+    <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <span class="text-primary fs-4 fw-bold">+</span>
+        <span class="fw-semibold fs-5">DocBook</span>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs border-bottom">
+        <li class="nav-item flex-fill text-center">
+          <button class="nav-link w-100 fw-medium"
+                  [class.active]="activeTab === 'login'"
+                  (click)="switchTab('login')">
+            Sign in
+          </button>
+        </li>
+        <li class="nav-item flex-fill text-center">
+          <button class="nav-link w-100 fw-medium"
+                  [class.active]="activeTab === 'signup'"
+                  (click)="switchTab('signup')">
+            Create account
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-body px-4 py-3">
+
+      <!-- Error Alert -->
+      <div *ngIf="errorMessage" class="alert alert-danger py-2 small mb-3">
+        {{ errorMessage }}
+      </div>
+
+      <!-- ── LOGIN FORM ── -->
+      <form *ngIf="activeTab === 'login'"
+            [formGroup]="loginForm"
+            (ngSubmit)="onLogin()"
+            novalidate>
+
+        <div class="mb-3">
+          <label class="form-label text-muted small">Email address</label>
+          <input type="email"
+                 class="form-control rounded-3"
+                 formControlName="email"
+                 placeholder="you@example.com"
+                 [class.is-invalid]="isInvalid(loginForm, 'email')" />
+          <div class="invalid-feedback">Please enter a valid email.</div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label text-muted small">Password</label>
+          <div class="input-group">
+            <input [type]="showPassword ? 'text' : 'password'"
+                   class="form-control rounded-start-3"
+                   formControlName="password"
+                   placeholder="••••••••"
+                   [class.is-invalid]="isInvalid(loginForm, 'password')" />
+            <button class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="showPassword = !showPassword">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+            <div class="invalid-feedback">Minimum 6 characters.</div>
+          </div>
+        </div>
+
+        <div class="text-end mb-3">
+          <a class="small text-primary text-decoration-none" style="cursor:pointer;">
+            Forgot password?
+          </a>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary w-100 rounded-3 py-2"
+                [disabled]="isLoading">
+          <span *ngIf="isLoading"
+                class="spinner-border spinner-border-sm me-2"></span>
+          Sign in
+        </button>
+
+        <p class="text-center small text-muted mt-3 mb-0">
+          No account?
+          <a class="text-primary text-decoration-none fw-medium"
+             style="cursor:pointer;"
+             (click)="switchTab('signup')">Create one</a>
+        </p>
+      </form>
+
+      <!-- ── SIGNUP FORM ── -->
+      <form *ngIf="activeTab === 'signup'"
+            [formGroup]="signupForm"
+            (ngSubmit)="onSignup()"
+            novalidate>
+
+        <div class="mb-3">
+          <label class="form-label text-muted small">Full name</label>
+          <input type="text"
+                 class="form-control rounded-3"
+                 formControlName="fullName"
+                 placeholder="John Doe"
+                 [class.is-invalid]="isInvalid(signupForm, 'fullName')" />
+          <div class="invalid-feedback">Minimum 3 characters.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label text-muted small">Email address</label>
+          <input type="email"
+                 class="form-control rounded-3"
+                 formControlName="email"
+                 placeholder="you@example.com"
+                 [class.is-invalid]="isInvalid(signupForm, 'email')" />
+          <div class="invalid-feedback">Please enter a valid email.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label text-muted small">Phone number</label>
+          <input type="tel"
+                 class="form-control rounded-3"
+                 formControlName="phone"
+                 placeholder="10-digit number"
+                 [class.is-invalid]="isInvalid(signupForm, 'phone')" />
+          <div class="invalid-feedback">Enter a valid 10-digit phone number.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label text-muted small">Password</label>
+          <div class="input-group">
+            <input [type]="showPassword ? 'text' : 'password'"
+                   class="form-control rounded-start-3"
+                   formControlName="password"
+                   placeholder="Min. 6 characters"
+                   [class.is-invalid]="isInvalid(signupForm, 'password')" />
+            <button class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="showPassword = !showPassword">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+            <div class="invalid-feedback">Minimum 6 characters.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label text-muted small">Confirm password</label>
+          <input type="password"
+                 class="form-control rounded-3"
+                 formControlName="confirmPassword"
+                 placeholder="Re-enter password"
+                 [class.is-invalid]="isInvalid(signupForm, 'confirmPassword') ||
+                   (signupForm.errors?.['passwordMismatch'] &&
+                    signupForm.get('confirmPassword')?.touched)" />
+          <div class="invalid-feedback">Passwords do not match.</div>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary w-100 rounded-3 py-2"
+                [disabled]="isLoading">
+          <span *ngIf="isLoading"
+                class="spinner-border spinner-border-sm me-2"></span>
+          Create account
+        </button>
+
+        <p class="text-center small text-muted mt-3 mb-0">
+          Already registered?
+          <a class="text-primary text-decoration-none fw-medium"
+             style="cursor:pointer;"
+             (click)="switchTab('login')">Sign in</a>
+        </p>
+      </form>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="card-footer bg-light border-0 text-center py-3">
+      <small class="text-muted">Your health data is safe and encrypted 🔒</small>
+    </div>
+
+  </div>
+</div>

@@ -4,12 +4,14 @@ using ClinicAI.Application.Features.Appointments.Commands.UpdateAppointment;
 using ClinicAI.Application.Features.Appointments.Queries.GetAppointments;
 using ClinicAI.Application.Features.Appointments.Queries.GetDoctorSlots;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAI.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AppointmentsController : ControllerBase
     {
         private readonly IMediator _mediator;

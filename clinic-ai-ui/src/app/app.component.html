@@ -1,71 +1,73 @@
-<!-- 🔷 TOP HEADER -->
-<div class="bg-dark text-white px-3 py-2 d-flex align-items-center">
+<!-- ✅ Show dashboard layout only when logged in -->
+<ng-container *ngIf="auth.isAuthenticated(); else loginOutlet">
 
-  <!-- ☰ Toggle Button -->
-  <button class="btn btn-sm btn-outline-light me-2"
-          (click)="toggleSidebar()">
-    ☰
-  </button>
+  <!-- 🔷 TOP HEADER -->
+  <div class="bg-dark text-white px-3 py-2 d-flex align-items-center justify-content-between">
 
-  <h6 class="mb-0 fw-semibold">Clinic AI</h6>
+    <div class="d-flex align-items-center">
+      <button class="btn btn-sm btn-outline-light me-2" (click)="toggleSidebar()">☰</button>
+      <h6 class="mb-0 fw-semibold">Clinic AI</h6>
+    </div>
 
-</div>
-
-<!-- 🔽 MAIN LAYOUT -->
-<div class="d-flex  " style="height: calc(100vh - 48px);">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar bg-dark text-white"
-       [class.collapsed]="!isSidebarOpen">
-
-    <!--<h6 class="text-white fw-semibold mb-3">Menu</h6>-->
-
-    <ul class="nav flex-column">
-
-      <li class="nav-item mb-2">
-        <a routerLink="/doctors"
-           routerLinkActive="active"
-           class="nav-link text-white">
-          <span *ngIf="isSidebarOpen">Doctors</span>
-        </a>
-      </li>
-
-      <li class="nav-item mb-2">
-        <a routerLink="/availability"
-           routerLinkActive="active"
-           class="nav-link text-white">
-          <span *ngIf="isSidebarOpen">Availability</span>
-        </a>
-      </li>
-
-      <li class="nav-item mb-2">
-        <a routerLink="/book"
-           routerLinkActive="active"
-           class="nav-link text-white">
-          <span *ngIf="isSidebarOpen">Book Appointment</span>
-        </a>
-      </li>
-
-      <li class="nav-item mb-2">
-        <a routerLink="/admin"
-           routerLinkActive="active"
-           class="nav-link text-white">
-          <span *ngIf="isSidebarOpen">Admin</span>
-        </a>
-      </li>
-
-    </ul>
+    <!-- 👤 User info + logout -->
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-secondary rounded-pill px-3 py-2">
+        👤 {{ auth.currentUser()?.name }}
+      </span>
+      <span class="badge bg-info text-dark rounded-pill px-2 py-2 text-capitalize small">
+        {{ auth.currentUser()?.roles?.[0] | lowercase }}
+      </span>
+      <button class="btn btn-sm btn-outline-light" (click)="logout()">Sign out</button>
+    </div>
 
   </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="content flex-grow-1 p-3 bg-light overflow-auto ">
+  <!-- 🔽 MAIN LAYOUT -->
+  <div class="d-flex" style="height: calc(100vh - 48px);">
 
-    <app-toast></app-toast>
-    <app-confirm></app-confirm>
+    <!-- SIDEBAR -->
+    <div class="sidebar bg-dark text-white" [class.collapsed]="!isSidebarOpen">
+      <ul class="nav flex-column">
 
-    <router-outlet></router-outlet>
+        <li class="nav-item mb-2">
+          <a routerLink="/doctors" routerLinkActive="active" class="nav-link text-white">
+            <span *ngIf="isSidebarOpen">🩺 Doctors</span>
+          </a>
+        </li>
+
+        <li class="nav-item mb-2">
+          <a routerLink="/availability" routerLinkActive="active" class="nav-link text-white">
+            <span *ngIf="isSidebarOpen">📅 Availability</span>
+          </a>
+        </li>
+
+        <li class="nav-item mb-2">
+          <a routerLink="/book" routerLinkActive="active" class="nav-link text-white">
+            <span *ngIf="isSidebarOpen">📋 Book Appointment</span>
+          </a>
+        </li>
+
+        <li class="nav-item mb-2" *ngIf="auth.hasRole('Admin')">
+          <a routerLink="/admin" routerLinkActive="active" class="nav-link text-white">
+            <span *ngIf="isSidebarOpen">⚙️ Admin</span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content flex-grow-1 p-3 bg-light overflow-auto">
+      <app-toast></app-toast>
+      <app-confirm></app-confirm>
+      <router-outlet></router-outlet>
+    </div>
 
   </div>
 
-</div>
+</ng-container>
+
+<!-- ✅ Not logged in — show login page via router outlet (no sidebar, no header) -->
+<ng-template #loginOutlet>
+  <router-outlet></router-outlet>
+</ng-template>

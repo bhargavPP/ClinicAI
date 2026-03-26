@@ -1,11 +1,12 @@
-using ClinicAI.Application;
 using ClinicAI.Application.Features.Doctors.Commands.CreateDoctor;
 using ClinicAI.Application.Interfaces;
+using ClinicAI.Infrastructure.Interface;
 using ClinicAI.Infrastructure.Persistence;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
@@ -43,9 +44,28 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddOpenApi();
 
-
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IClinicDbContext>(Provider => Provider.GetRequiredService<ClinicDbContext>());
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
 
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+            )
+        };
+    });
+
+builder.Services.AddAuthorization();
 var app = builder.Build();
 // ✅ 1. Exception middleware FIRST
 app.UseMiddleware<ClinicAI.API.Middleware.ExceptionMiddleware>();
