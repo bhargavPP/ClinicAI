@@ -8,16 +8,27 @@ export const roleGuard: CanActivateFn = (route) => {
 
   const requiredRoles = route.data?.['roles'] as string[];
 
+  const user = auth.getCurrentUser();
+
+  if (!user) {
+    router.navigate(['/login']);
+    return false;
+  } 
+  //console.log(user);
+  //const userRoles: string[] = user.roles ?? [user.roles];
+
+  // ✅ Admin override
+  if (user.role =='Admin') return true;
+
   if (!requiredRoles || requiredRoles.length === 0) {
     return true;
   }
 
-  const hasRole = requiredRoles.some(role => auth.hasRole(role));
+  const hasRole = requiredRoles.some(role =>
+    user.role==role);
 
-  if (!hasRole) {
-    router.navigate(['/unauthorized']);
-    return false;
-  }
+  if (hasRole) return true;
 
-  return true;
+  router.navigate(['/unauthorized']);
+  return false;
 };

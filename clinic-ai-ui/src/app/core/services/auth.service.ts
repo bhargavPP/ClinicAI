@@ -4,11 +4,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { enumRole } from '../../../common/enum';
+
 export interface AuthUser {
   id: number;
   email: string;
   name: string;
-  roles: string[];
+  role: string;
 }
 
 export interface LoginRequest {
@@ -33,7 +35,8 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = `${environment.apiUrl}/auth`; // 🔁 Replace with your .NET API base URL
+  private readonly API_URL = `${environment.apiUrl}/auth`;
+  private readonly enumRol = enumRole;
   private readonly ACCESS_TOKEN_KEY = 'access_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
   private readonly USER_KEY = 'auth_user';
@@ -43,7 +46,7 @@ export class AuthService {
   readonly currentUser = this._currentUser.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
   readonly isAuthenticated = computed(() => !!this._currentUser());
-  readonly userRoles = computed(() => this._currentUser()?.roles ?? []);
+  //readonly userRoles = computed(() => this._currentUser()?.role ?? []);
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -53,6 +56,7 @@ export class AuthService {
       tap((response) => {
         this._isLoading.set(false);
         this._currentUser.set(response.user);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
        // this.StoreTokens(response.accessToken, response.refreshToken);
       }),
       catchError((error) => {
@@ -67,18 +71,12 @@ export class AuthService {
     }).subscribe();
 
     this._currentUser.set(null);
+    localStorage.removeItem(this.USER_KEY); 
     this.router.navigate(['/login']);
   }
   private getUserFromStorage(): AuthUser | null {
-    const token = localStorage.getItem(this.ACCESS_TOKEN_KEY);
-    if (!token) return null;
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.user as AuthUser ?? null;
-    } catch {
-      return null;
-    }
+    const user = localStorage.getItem(this.USER_KEY);
+    return user ? JSON.parse(user) : null;
   }
   public StoreTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
@@ -126,7 +124,7 @@ export class AuthService {
   }
 
   hasRole(role: string): boolean {
-    return this.userRoles().includes(role);
+    return this._currentUser()?.role===role;
   }
   register(payload: RegisterRequest): Observable<any> {
     this._isLoading.set(true);
@@ -136,7 +134,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         this._currentUser.set(response.user);
-        this._isLoading.set(false);
+        this._isLoading.set(false); localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
       }),
       catchError(err => {
         this._isLoading.set(false);
@@ -150,7 +148,25 @@ export class AuthService {
       Authorization: `Bearer ${this.getAccessToken()}`
     });
   }
+  getCurrentUser() {
+    return this._currentUser();
+  }
 
+  //getUserRole(): string | null {
+  //  return this._currentUser()?.roles || null;
+  //}
+
+  //isAdmin(): boolean {
+  //  return this.getUserRole() === enumRole.Admin;
+  //}
+
+  //isDoctor(): boolean {
+  //  return this.getUserRole() === enumRole.Doctor;
+  //}
+
+  //isPatient(): boolean {
+  //  return this.getUserRole() === enumRole.Patient;
+  //}
   // ── PRIVATE ────────────────────────────────────────────
 
   // Stores tokens + user in localStorage and updates signal

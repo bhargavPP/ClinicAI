@@ -105,7 +105,7 @@ export class BookAppointmentComponent implements OnInit {
   cancelAppointment(id: string) {
 
     this.confirmService.confirm('Are you sure you want to cancel this appointment?').then(result => {
-      console.log(result);
+     
       if (!result) return;
 
 
@@ -259,7 +259,7 @@ export class BookAppointmentComponent implements OnInit {
      this.appointmentService
       .getAppointments(this.currentPatientId)
        .subscribe(res => {
-         console.log('API response:', res);
+        
          this.appointments = res;
        });
   }

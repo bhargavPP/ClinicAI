@@ -12,12 +12,11 @@ import { AuthModalComponent } from './features/users/auth-modal/auth-modal.compo
 const routes: Routes = [
   // Login page — redirect away if already logged in
   { path: 'login', component: AuthModalComponent, canActivate: [loginGuard] },
-
   // Protected routes
-  { path: 'doctors', component: DoctorListComponent, canActivate: [authGuard, roleGuard], },
-  { path: 'book', component: BookAppointmentComponent, canActivate: [authGuard, roleGuard] },
-  { path: 'admin', component: DoctorAdminComponent, canActivate: [authGuard, roleGuard] },
-  { path: 'availability', component: DoctorAvailabilityComponent, canActivate: [authGuard, roleGuard] },
+  { path: 'doctors', component: DoctorListComponent, canActivate: [authGuard, roleGuard], data: { roles: ['Patient'] } },
+  { path: 'book', component: BookAppointmentComponent, canActivate: [authGuard, roleGuard], data: { roles: ['Patient'] } },
+  { path: 'admin', component: DoctorAdminComponent, canActivate: [authGuard, roleGuard], data: { roles: ['Admin'] } },
+  { path: 'availability', component: DoctorAvailabilityComponent, canActivate: [authGuard, roleGuard], data: { roles: ['Doctor'] } },
 
   // Default redirect
   { path: '', redirectTo: 'login', pathMatch: 'full' },
