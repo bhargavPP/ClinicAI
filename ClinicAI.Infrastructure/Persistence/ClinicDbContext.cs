@@ -14,6 +14,7 @@ namespace ClinicAI.Infrastructure.Persistence
         public DbSet<Patient> Patients => Set<Patient>();
         public DbSet<Appointment> Appointments => Set<Appointment>();
         public DbSet<User> Users => Set<User>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<DoctorsAvailability> DoctorsAvailabilities => Set<DoctorsAvailability>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

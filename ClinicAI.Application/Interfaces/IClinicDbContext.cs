@@ -12,5 +12,7 @@ namespace ClinicAI.Application.Interfaces
         DbSet<User> Users { get; }
         DbSet<DoctorsAvailability> DoctorsAvailabilities { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+
+        DbSet<RefreshToken> RefreshTokens { get;  }
     }
 }

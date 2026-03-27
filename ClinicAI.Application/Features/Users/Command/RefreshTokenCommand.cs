@@ -4,9 +4,7 @@ using MediatR;
 
 namespace ClinicAI.Application.Features.Users.Command
 {
-
-    public record LoginUserCommand(
-    string Email,
-    string Password
-) : IRequest<Result<AuthResponse>>;
+    public record RefreshTokenCommand(string RefreshToken) : IRequest<Result<AuthResponse>>
+    {
+    }
 }

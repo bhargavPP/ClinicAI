@@ -1,9 +1,9 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 export interface AuthUser {
   id: number;
   email: string;
@@ -33,10 +33,10 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = 'https://your-api.com/api/auth'; // 🔁 Replace with your .NET API base URL
+  private readonly API_URL = `${environment.apiUrl}/api/auth`; // 🔁 Replace with your .NET API base URL
   private readonly ACCESS_TOKEN_KEY = 'access_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
-
+  private readonly USER_KEY = 'auth_user';
   private _currentUser = signal<AuthUser | null>(this.getUserFromStorage());
   private _isLoading = signal<boolean>(false);
 
@@ -132,5 +132,28 @@ export class AuthService {
         return throwError(() => err);
       })
     );
+  }
+
+  getAuthHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      Authorization: `Bearer ${this.getAccessToken()}`
+    });
+  }
+
+  // ── PRIVATE ────────────────────────────────────────────
+
+  // Stores tokens + user in localStorage and updates signal
+  private handleAuthSuccess(res: AuthResponse): void {
+    localStorage.setItem(this.ACCESS_TOKEN_KEY, res.accessToken);
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, res.refreshToken);
+    localStorage.setItem(this.USER_KEY, JSON.stringify(res.user));
+    this._currentUser.set(res.user);
+  }
+
+
+  private clearStorage(): void {
+    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
   }
 }

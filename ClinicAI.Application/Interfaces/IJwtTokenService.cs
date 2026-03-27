@@ -4,6 +4,7 @@ namespace ClinicAI.Application.Interfaces
 {
     public interface IJwtTokenService
     {
-        string GenerateToken(User user);
+        string GenerateAccessToken(User user);
+        string GenerateRefreshToken();
     }
 }

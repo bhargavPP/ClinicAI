@@ -14,6 +14,8 @@ import { DoctorAvailabilityComponent } from './features/availability/doctor-avai
 import { ToastComponent } from './shared/toast/toast.component';
 import { ConfirmComponent } from './shared/confirm/confirm.component';
 import { AuthModalComponent } from './features/users/auth-modal/auth-modal.component';
+import { AuthInterceptor } from './core/interceptors/auth-interceptor';
+
 @NgModule({
   declarations: [ 
       
@@ -33,7 +35,13 @@ import { AuthModalComponent } from './features/users/auth-modal/auth-modal.compo
     ToastComponent, ConfirmComponent, ReactiveFormsModule, AuthModalComponent
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }, provideZoneChangeDetection({ eventCoalescing: true })
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true            // ← required
+    }
   ],
   bootstrap: [AppComponent]
 })
