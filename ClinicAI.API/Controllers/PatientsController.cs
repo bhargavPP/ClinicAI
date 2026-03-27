@@ -1,11 +1,13 @@
 ﻿using ClinicAI.Application.Features.Patients.Commands.CreatePatient;
 using ClinicAI.Application.Features.Patients.Queries.GetPatients;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAI.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PatientsController : ControllerBase

@@ -5,6 +5,7 @@ import { BookAppointmentComponent } from './features/appointments/book-appointme
 import { DoctorAdminComponent } from './features/admin/doctor-admin/doctor-admin.component';
 import { DoctorAvailabilityComponent } from './features/availability/doctor-availability/doctor-availability.component';
 import { authGuard } from './core/guard/auth-guard';
+import { roleGuard } from './core/guard/role-guard';           // ← new guard (step 1)
 import { loginGuard } from './core/guard/login-guard';         // ← new guard (step 2)
 import { AuthModalComponent } from './features/users/auth-modal/auth-modal.component';
 
@@ -13,10 +14,10 @@ const routes: Routes = [
   { path: 'login', component: AuthModalComponent, canActivate: [loginGuard] },
 
   // Protected routes
-  { path: 'doctors', component: DoctorListComponent, canActivate: [authGuard] },
-  { path: 'book', component: BookAppointmentComponent, canActivate: [authGuard] },
-  { path: 'admin', component: DoctorAdminComponent, canActivate: [authGuard] },
-  { path: 'availability', component: DoctorAvailabilityComponent, canActivate: [authGuard] },
+  { path: 'doctors', component: DoctorListComponent, canActivate: [authGuard, roleGuard], },
+  { path: 'book', component: BookAppointmentComponent, canActivate: [authGuard, roleGuard] },
+  { path: 'admin', component: DoctorAdminComponent, canActivate: [authGuard, roleGuard] },
+  { path: 'availability', component: DoctorAvailabilityComponent, canActivate: [authGuard, roleGuard] },
 
   // Default redirect
   { path: '', redirectTo: 'login', pathMatch: 'full' },

@@ -6,8 +6,12 @@ export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  if (auth.isAuthenticated()) return true;
+  const isLoggedIn = auth.isAuthenticated() ;
 
-  router.navigate(['/doctors']); // redirect and let modal handle login
+  if (isLoggedIn) return true;
+
+  router.navigate(['/login'], {
+    queryParams: { returnUrl: location.pathname }
+  });
   return false;
 };

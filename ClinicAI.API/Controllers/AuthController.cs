@@ -1,58 +1,95 @@
 ﻿using ClinicAI.Application.DTOs;
 using ClinicAI.Application.Features.Users.Command;
-using ClinicAI.Application.Features.Users.Queries;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ClinicAI.API.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly IMediator _mediator;
+
+    public AuthController(IMediator mediator)
     {
-        private readonly IMediator _mediator;
-        public AuthController(IMediator mediator)
-        {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-        }
+        _mediator = mediator;
+    }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterUserCommand command)
-        {
-            try
-            {
-                var result = await _mediator.Send(command);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginUserCommand command)
-        {
-            try
-            {
-                var result = await _mediator.Send(new LoginUserQuery(command.Email, command.Password));
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-        [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh(RefreshTokenRequest request)
-        {
-            var result = await _mediator.Send(
-                new RefreshTokenCommand(request.RefreshToken));
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(RegisterUserCommand command)
+    {
+        var result = await _mediator.Send(command);
 
-            if (!result.IsSuccess)
-                return Unauthorized(result.Message);
+        if (!result.IsSuccess)
+            return BadRequest(result.Message);
 
-            return Ok(result);
-        }
+        var data = result.Data;
+
+        SetCookies(data);
+
+        return Ok(new { user = data.User });
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginUserCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess)
+            return Unauthorized(result.Message);
+
+        var data = result.Data;
+
+        SetCookies(data);
+
+        return Ok(new { user = data.User });
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        var result = await _mediator.Send(new RefreshTokenCommand(refreshToken));
+
+        if (!result.IsSuccess)
+            return Unauthorized(result.Message);
+
+        var data = result.Data;
+
+        SetCookies(data);
+
+        return Ok(new { user = data.User });
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        await _mediator.Send(new LogoutCommand(refreshToken));
+
+        Response.Cookies.Delete("accessToken");
+        Response.Cookies.Delete("refreshToken");
+
+        return Ok();
+    }
+
+    private void SetCookies(AuthResponse data)
+    {
+        Response.Cookies.Append("accessToken", data.AccessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTime.UtcNow.AddMinutes(60)
+        });
+
+        Response.Cookies.Append("refreshToken", data.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTime.UtcNow.AddDays(7)
+        });
     }
 }

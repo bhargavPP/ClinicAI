@@ -3,10 +3,12 @@ using ClinicAI.Application.Features.Doctors.Commands.DeleteDoctor;
 using ClinicAI.Application.Features.Doctors.Commands.UpdateDoctor;
 using ClinicAI.Application.Features.Doctors.Queries.GetDoctors;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAI.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorsController : ControllerBase

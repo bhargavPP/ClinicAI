@@ -9,7 +9,7 @@ export const loginGuard: CanActivateFn = () => {
 
   // Already logged in → go straight to dashboard
   if (auth.isAuthenticated()) {
-    router.navigate(['/login']);
+    router.navigate(['/doctors']);;
     return false;
   }
   return true;

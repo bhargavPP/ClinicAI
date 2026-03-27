@@ -1,9 +1,10 @@
-﻿using ClinicAI.Application.DTOs;
+﻿using ClinicAI.Application.common.Models;
+using ClinicAI.Application.DTOs;
 using MediatR;
 
 namespace ClinicAI.Application.Features.Users.Command
 {
-    public class RegisterUserCommand : IRequest<AuthResponse>
+    public class RegisterUserCommand : IRequest<Result<AuthResponse>>
     {
         public String Email { get; set; }
         public String Password { get; set; }

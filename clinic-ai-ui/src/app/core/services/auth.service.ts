@@ -33,7 +33,7 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = `${environment.apiUrl}/api/auth`; // 🔁 Replace with your .NET API base URL
+  private readonly API_URL = `${environment.apiUrl}/auth`; // 🔁 Replace with your .NET API base URL
   private readonly ACCESS_TOKEN_KEY = 'access_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
   private readonly USER_KEY = 'auth_user';
@@ -49,11 +49,11 @@ export class AuthService {
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     this._isLoading.set(true);
-    return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials, {withCredentials:true}).pipe(
       tap((response) => {
         this._isLoading.set(false);
         this._currentUser.set(response.user);
-        this.StoreTokens(response.accessToken, response.refreshToken);
+       // this.StoreTokens(response.accessToken, response.refreshToken);
       }),
       catchError((error) => {
         this._isLoading.set(false);
@@ -61,8 +61,11 @@ export class AuthService {
       }));
   }
 
-  logOut(): void {
-    this.clearTokens();
+  logout(): void {
+    this.http.post(`${this.API_URL}/logout`, {}, {
+      withCredentials: true
+    }).subscribe();
+
     this._currentUser.set(null);
     this.router.navigate(['/login']);
   }
@@ -77,26 +80,32 @@ export class AuthService {
       return null;
     }
   }
-  private StoreTokens(accessToken: string, refreshToken: string): void {
+  public StoreTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
     localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
   }
   private clearTokens(): void {
+    const refreshToken = this.getRefreshToken();
+
+    if (refreshToken) {
+      this.http.post(`${this.API_URL}/logout`, { refreshToken }).subscribe();
+    }
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
   }
 
-  refreshToken(): Observable<AuthResponse> {
-    const refreshToken = this.getRefreshToken();
-    return this.http.post<AuthResponse>(`${this.API_URL}/refresh`, { refreshToken }).pipe(
+  refreshToken(): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/refresh`, {}, {
+      withCredentials: true
+    }).pipe(
       tap((response) => {
-        this.StoreTokens(response.accessToken, response.refreshToken);
         this._currentUser.set(response.user);
       }),
       catchError((error) => {
-        this.logOut();
-        return throwError(() => new Error(error.error?.message || 'Token refresh failed'));
-      }));
+        this.logout();
+        return throwError(() => new Error('Token refresh failed'));
+      })
+    );
   }
   getAccessToken(): string | null {
     return localStorage.getItem(this.ACCESS_TOKEN_KEY);
@@ -119,11 +128,13 @@ export class AuthService {
   hasRole(role: string): boolean {
     return this.userRoles().includes(role);
   }
-  register(payload: RegisterRequest): Observable<AuthResponse> {
+  register(payload: RegisterRequest): Observable<any> {
     this._isLoading.set(true);
-    return this.http.post<AuthResponse>(`${this.API_URL}/register`, payload).pipe(
+   
+    return this.http.post<any>(`${this.API_URL}/register`, payload, {
+      withCredentials: true
+    }).pipe(
       tap(response => {
-        this.StoreTokens(response.accessToken, response.refreshToken);
         this._currentUser.set(response.user);
         this._isLoading.set(false);
       }),

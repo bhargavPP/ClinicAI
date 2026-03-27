@@ -3,31 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
-//export interface LoginRequest {
-//  email: string;
-//  password: string;
-//}
 
-//export interface RegisterRequest {
-//  firstName: string;
-//  lastName: string;
-//  email: string;
-//  phone: string;
-//  password: string;
-//  confirmPassword: string;
-//}
-
-//export interface AuthResponse {
-//  accessToken: string;
-//  refreshToken: string;
-//  expiresIn: number;
-//  user: {
-//    id: number;
-//    fullName: string;
-//    email: string;
-//    role: 'Patient' | 'Doctor' | 'Admin';
-//  };
-//}
 type ActiveTab = 'login' | 'signup';
 
 @Component({
@@ -81,7 +57,12 @@ export class AuthModalComponent {
     this.isLoading = true;
     this.errorMessage = '';
     this.authService.login(this.loginForm.value).subscribe({
-      next: () => { this.isLoading = false; this.router.navigate(['/doctors']); },
+      next: () => {
+        
+        this.isLoading = false;
+        // this.router.navigate(['/book']);
+        this.router.navigateByUrl('/doctors');
+      },
       error: (err) => { this.isLoading = false; this.errorMessage = err.message || 'Login failed. Please try again.'; }
     });
   }
@@ -91,8 +72,8 @@ export class AuthModalComponent {
     this.isLoading = true;
     this.errorMessage = '';
     const { confirmPassword, ...payload } = this.signupForm.value;
-    this.authService.register(payload).subscribe({
-      next: () => { this.isLoading = false; this.router.navigate(['/doctors']); },
+    this.authService.register(this.signupForm.value).subscribe({
+      next: () => { this.isLoading = false; this.router.navigate(['/book']); },
       error: (err) => { this.isLoading = false; this.errorMessage = err?.error?.message || 'Registration failed. Please try again.'; }
     });
   }

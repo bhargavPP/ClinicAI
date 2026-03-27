@@ -13,17 +13,35 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private auth: AuthService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.auth.getAccessToken();
 
-    // Attach token to every request
-    const authReq = token ? this.addToken(req, token) : req;
+    // ✅ Always send cookies
+    const clonedRequest = req.clone({
+      withCredentials: true
+    });
 
-    return next.handle(authReq).pipe(
+    return next.handle(clonedRequest).pipe(
       catchError((err: HttpErrorResponse) => {
-        // Auto-refresh on 401
-        if (err.status === 401 && !req.url.includes('/refresh')) {
-          return this.handle401(req, next);
+
+        // 🔁 Handle 401 → refresh token
+        if (err.status === 401 && !this.isRefreshing) {
+
+          this.isRefreshing = true;
+
+          return this.auth.refreshToken().pipe(
+            switchMap(() => {
+              this.isRefreshing = false;
+
+              // ✅ Retry original request
+              return next.handle(req.clone({ withCredentials: true }));
+            }),
+            catchError(error => {
+              this.isRefreshing = false;
+              this.auth.logout();
+              return throwError(() => error);
+            })
+          );
         }
+
         return throwError(() => err);
       })
     );
@@ -36,25 +54,37 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private handle401(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
     if (!this.isRefreshing) {
       this.isRefreshing = true;
       this.refreshSubject.next(null);
 
+      const refreshToken = this.auth.getRefreshToken();
+
+      if (!refreshToken) {
+        this.auth.logout();
+        return throwError(() => 'No refresh token');
+      }
+
       return this.auth.refreshToken().pipe(
         switchMap((res) => {
           this.isRefreshing = false;
+
+          // ✅ Store new tokens
+          this.auth.StoreTokens(res.accessToken, res.refreshToken);
+
           this.refreshSubject.next(res.accessToken);
+
           return next.handle(this.addToken(req, res.accessToken));
         }),
         catchError((err) => {
           this.isRefreshing = false;
-          this.auth.logOut();
+          this.auth.logout();
           return throwError(() => err);
         })
       );
     }
 
-    // Queue other requests while refreshing
     return this.refreshSubject.pipe(
       filter(token => token !== null),
       take(1),

@@ -3,10 +3,12 @@ using ClinicAI.Application.Features.Availability.Commands.DeleteAvailability;
 using ClinicAI.Application.Features.Availability.Commands.UpdateAvailability;
 using ClinicAI.Application.Features.Availability.Queries.GetAvailability;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAI.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AvailabilityController : ControllerBase
