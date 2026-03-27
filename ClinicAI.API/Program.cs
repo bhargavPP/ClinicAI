@@ -132,5 +132,5 @@ app.UseAuthorization();
 
 // ✅ 4. Endpoints
 app.MapControllers();
-
+await DbInitializer.SeedAdminAsync(app.Services);
 app.Run();
