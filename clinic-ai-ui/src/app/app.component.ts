@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   imports: [RouterModule, ToastComponent, ConfirmComponent, CommonModule, AuthModalComponent]
 })
 export class AppComponent {
-  title = 'clinic-ai-ui';
+  title = 'clinic`';
 
   isSidebarOpen = true;
   showAuthModal = false;

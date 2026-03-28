@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClinicAI.Application.Constants
+﻿namespace ClinicAI.Application.Constants
 {
     public class Constant
     {

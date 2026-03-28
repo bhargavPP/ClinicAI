@@ -17,8 +17,22 @@ namespace ClinicAI.Application.Features.Appointments.Queries.GetAppointments
 
         public async Task<List<AppointmentDto>> Handle(GetAppointmentsQuery request, CancellationToken cancellationToken)
         {
-            var query = _context.Appointments.Include(a=>a.Doctor).AsQueryable();
-            if (request.PatientId.HasValue)
+            var query = _context.Appointments.Include(a=>a.Doctor).Include(a=>a.Patient).AsQueryable();
+            if (request.UserId.HasValue && !string.IsNullOrEmpty(request.Role))
+            {
+                if (request.Role == "Doctor")
+                {
+                    query = query.Where(a => a.DoctorId == request.UserId.Value);
+                }
+                else if (request.Role == "Patient")
+                {
+                    query = query.Where(a => a.Patient.UserId == request.UserId.Value);
+                }
+                // Admin → no filter
+            }
+
+            // ✅ CASE 2: Admin filtering by patientId
+            else if (request.PatientId.HasValue)
             {
                 query = query.Where(a => a.PatientId == request.PatientId.Value);
             }

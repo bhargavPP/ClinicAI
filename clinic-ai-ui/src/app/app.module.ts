@@ -15,10 +15,14 @@ import { ToastComponent } from './shared/toast/toast.component';
 import { ConfirmComponent } from './shared/confirm/confirm.component';
 import { AuthModalComponent } from './features/users/auth-modal/auth-modal.component';
 import { AuthInterceptor } from './core/interceptors/auth-interceptor';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { DoctorCalendarComponent } from './features/doctor/doctor-calendar/doctor-calendar.component';
+import { AppointmentModel } from './shared/appointment-model/appointment-model';
 
 @NgModule({
-  declarations: [ 
-      
+  declarations: [  
+  
+    
   ],
   imports: [
     BrowserModule,
@@ -32,7 +36,8 @@ import { AuthInterceptor } from './core/interceptors/auth-interceptor';
     BookAppointmentComponent,
     DoctorAdminComponent,
     DoctorAvailabilityComponent,
-    ToastComponent, ConfirmComponent, ReactiveFormsModule, AuthModalComponent
+    ToastComponent, ConfirmComponent, ReactiveFormsModule, AuthModalComponent,
+    FullCalendarModule, DoctorCalendarComponent, AppointmentModel
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

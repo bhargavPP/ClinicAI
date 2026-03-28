@@ -19,11 +19,15 @@ export class AppointmentService {
   constructor(private http: HttpClient) {
   }
   createAppointment(data: CreateAppointment): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+    return this.http.post<any>(this.apiUrl, data, {
+      withCredentials: true
+    });
   }
   getSlots(doctorId: string, date: string): Observable<any> {
 
-    return this.http.get<string[]>(`${this.apiUrl}/slots?doctorId=${doctorId}&date=${date}`);
+    return this.http.get<string[]>(`${this.apiUrl}/slots?doctorId=${doctorId}&date=${date}`, {
+      withCredentials: true
+    });
   }
   getAppointments(patientId: string) {
   
@@ -32,17 +36,21 @@ export class AppointmentService {
     if (patientId) {
       url = `${this.apiUrl}?patientId=${patientId}`;
     }
-
-    console.log('patientId:', patientId, 'url:', url);
-
-      return this.http.get<any[]>(url);
-   
+    return this.http.get<any[]>(url, {
+      withCredentials: true
+    });
   }
-
+  getMyAppointments() {
+    return this.http.get<any[]>(`${this.apiUrl}/my-appointments`, {
+      withCredentials: true
+    });
+  }
   updateAppointment(data: any) {
     return this.http.put<any>(`${this.apiUrl}/${data.id}`, data);
   }
   cancelAppointment(id: string) {
-    return this.http.put<any>(`${this.apiUrl}/${id}/cancel`, {});
+    return this.http.put<any>(`${this.apiUrl}/${id}/cancel`, {}, {
+      withCredentials: true
+    });
   }
 }

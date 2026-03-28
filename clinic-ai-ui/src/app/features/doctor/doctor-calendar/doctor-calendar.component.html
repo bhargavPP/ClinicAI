@@ -1,0 +1,6 @@
+<full-calendar [options]="calendarOptions"></full-calendar>
+
+<app-appointment-model *ngIf="selectedEvent"
+                       [appointment]="selectedEvent"
+                       (closeEvent)="selectedEvent = null">
+</app-appointment-model>

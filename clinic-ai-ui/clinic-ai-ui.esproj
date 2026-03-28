@@ -7,4 +7,8 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\clinic-ai-ui\browser\</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="src\app\core\features\**" />
+    <TypeScriptConfiguration Remove="src\app\core\features\**" />
+  </ItemGroup>
 </Project>

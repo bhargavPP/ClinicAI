@@ -1,0 +1,25 @@
+<div class="modal fade show d-block" *ngIf="appointment">
+
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5>Appointment Details</h5>
+        <button class="btn-close" (click)="close()"></button>
+      </div>
+
+      <div class="modal-body">
+        <p><strong>Patient:</strong> {{appointment.title}}</p>
+        <p><strong>Status:</strong> {{appointment.extendedProps['status']}}</p>
+        <p><strong>Notes:</strong> {{appointment.extendedProps['notes']}}</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-danger" (click)="cancel()">Cancel</button>
+        <button class="btn btn-secondary" (click)="close()">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

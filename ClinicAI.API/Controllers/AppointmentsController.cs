@@ -6,6 +6,7 @@ using ClinicAI.Application.Features.Appointments.Queries.GetDoctorSlots;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ClinicAI.API.Controllers
 {
@@ -40,13 +41,27 @@ namespace ClinicAI.API.Controllers
 
             return Ok(result);
         }
-        [HttpGet]
+        [HttpGet("appointments")]
         public async Task<IActionResult> GetAppointments([FromQuery] Guid? patientId)
         {
             var result = await _mediator.Send(new GetAppointmentsQuery
             {
                 PatientId = patientId
             });
+            return Ok(result);
+        }
+        [HttpGet("my-appointments")]
+        public async Task<IActionResult> GetMyAppointments()
+        {
+            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var role = User.FindFirst(ClaimTypes.Role).Value;
+
+            var result = await _mediator.Send(new GetAppointmentsQuery
+            {
+                UserId = userId,
+                Role = role
+            });
+
             return Ok(result);
         }
         [HttpPut("{id}/cancel")]
