@@ -9,13 +9,14 @@
       </div>
 
       <div class="modal-body">
+        
         <p><strong>Patient:</strong> {{appointment.title}}</p>
         <p><strong>Status:</strong> {{appointment.extendedProps['status']}}</p>
         <p><strong>Notes:</strong> {{appointment.extendedProps['notes']}}</p>
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-danger" (click)="cancel()">Cancel</button>
+        <button class="btn btn-danger" (click)="cancel(appointment)">Cancel</button>
         <button class="btn btn-secondary" (click)="close()">Close</button>
       </div>
 

@@ -193,7 +193,25 @@ Notes: ${info.event.extendedProps['notes']}
       };
     });
   }
+  onAppointmentCancelled(id: string) {
 
+    console.log('Cancelled from child:', id);
+
+    // update local list
+    const appt = this.appointments.find(a => a.id === id);
+    if (appt) {
+      appt.status = 'Cancelled';
+    }
+
+    // refresh filtered views
+    this.applyFilter();
+
+    // refresh calendar
+    this.loadAppointments();
+
+    // close modal
+    this.selectedEvent = null;
+  }
   // ✅ Unified filter for LIST VIEW
   get filteredList() {
     return this.appointments.filter(a => {

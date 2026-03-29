@@ -26,7 +26,7 @@
 
 <app-appointment-model *ngIf="selectedEvent"
                        [appointment]="selectedEvent"
-                       (closeEvent)="selectedEvent = null"> </app-appointment-model>
+                       (closeEvent)="selectedEvent = null" (cancelled)="onAppointmentCancelled($event)"> </app-appointment-model>
 
 <!-- ================= LIST VIEW ================= -->
 
@@ -60,7 +60,7 @@
       </tr>
     </thead>
 
-    ```
+    
     <tbody>
       <tr *ngFor="let a of filteredList">
         <td>{{a.patientName}}</td>
@@ -85,7 +85,7 @@
         </td>
       </tr>
     </tbody>
-    ```
+  
 
   </table>
 
@@ -121,14 +121,14 @@
         <td>{{a.status}}</td>
       </tr>
 
-      ```
+    
       <tr *ngIf="filteredAppointments.length === 0">
         <td colspan="3" class="text-center text-muted">
           No appointments for this day
         </td>
       </tr>
     </tbody>
-    ```
+   
 
   </table>
 
