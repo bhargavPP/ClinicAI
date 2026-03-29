@@ -67,3 +67,23 @@
 .content {
   transition: all 0.3s ease;
 }
+.fc-event-title,
+.fc-event-time {
+  display: none !important;
+}
+
+.fc-timegrid-event {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.fc-timegrid-event-harness {
+  margin: 4px 6px;
+}
+.fc-event-title,
+.fc-event-time,
+.fc-event-main-frame {
+  display: none !important;
+}
