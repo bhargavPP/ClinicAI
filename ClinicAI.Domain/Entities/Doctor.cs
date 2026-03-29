@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClinicAI.Domain.Entities
+namespace ClinicAI.Domain.Entities 
 {
-    public class Doctor
+    public class Doctor : BaseEntity
     {
-        public Guid Id { get; set; }
+       // public Guid Id { get; set; }
         public string Name { get; set; } = null!;
 
         public string Specialization { get; set; } = null!;

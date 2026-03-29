@@ -42,7 +42,7 @@ namespace ClinicAI.Application.Features.Users.Command
             _context.RefreshTokens.Add(new RefreshToken
             {
                 Token = refreshToken,
-                UserId = user.id,
+                UserId = user.Id,
                 ExpiresAt = DateTime.UtcNow.AddDays(7)
             });
 
@@ -54,7 +54,7 @@ namespace ClinicAI.Application.Features.Users.Command
                     accessToken,
                     refreshToken,
                     3600,
-                    new UserDto(user.id, user.FullName, user.Email, user.Role)
+                    new UserDto(user.Id, user.FullName, user.Email, user.Role)
                 ),
                 "Login Successful"
             );

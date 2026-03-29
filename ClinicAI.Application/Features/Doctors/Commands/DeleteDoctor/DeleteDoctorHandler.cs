@@ -1,21 +1,19 @@
-﻿using ClinicAI.Application.Interfaces;
+﻿using ClinicAI.Application.Features.Patients.Commands.DeletePatient;
+using ClinicAI.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClinicAI.Application.Features.Doctors.Commands.DeleteDoctor
 {
-    public class DeleteDoctorHandler:IRequestHandler<DeleteDoctorCommand,bool>
+    public class DeletePatientHandler:BaseHandler, IRequestHandler<DeletePatientCommand,bool>
     {
-        private readonly IClinicDbContext _context;
-        public DeleteDoctorHandler(IClinicDbContext context)
+    
+        public DeletePatientHandler(IClinicDbContext context,ICurrentUserService currentUser, IDateTime dateTime) : base(context, currentUser, dateTime)
         {
-            _context = context??throw new Exception(nameof(context));
+            
         }
 
-        public async Task<bool> Handle(DeleteDoctorCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(DeletePatientCommand request, CancellationToken cancellationToken)
         {
             var doctor = await _context.Doctors
            .FirstOrDefaultAsync(d => d.Id == request.Id, cancellationToken);
@@ -25,7 +23,9 @@ namespace ClinicAI.Application.Features.Doctors.Commands.DeleteDoctor
                 throw new Exception("Doctor not found");
                 //return false; // Doctor not found
             }
-            _context.Doctors.Remove(doctor);
+            doctor.IsDeleted = true;
+            doctor.DeletedAt = _dateTime.dateTimeUtcNow;
+            doctor.DeletedBy = currentUserId;
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;

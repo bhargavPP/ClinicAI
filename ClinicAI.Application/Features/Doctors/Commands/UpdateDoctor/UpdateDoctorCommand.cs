@@ -1,11 +1,9 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ClinicAI.Application.common.Models;
+using MediatR;
 
 namespace ClinicAI.Application.Features.Doctors.Commands.UpdateDoctor
 {
-    public class UpdateDoctorCommand:IRequest<bool>
+    public class UpdateDoctorCommand:IRequest<Result<bool>>
     {
         public Guid Id { get; set; }
 

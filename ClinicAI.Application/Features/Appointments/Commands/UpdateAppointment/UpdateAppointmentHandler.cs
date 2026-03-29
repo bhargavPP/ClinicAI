@@ -5,19 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicAI.Application.Features.Appointments.Commands.UpdateAppointment
 {
-    public class UpdateAppointmentHandler : IRequestHandler<UpdateAppointmentCommand, Result<bool>>
+    public class UpdateAppointmentHandler : BaseHandler, IRequestHandler<UpdateAppointmentCommand, Result<bool>>
     {
-        private readonly IClinicDbContext _context;
-
-        public UpdateAppointmentHandler(IClinicDbContext context)
+    
+        public UpdateAppointmentHandler(IClinicDbContext context ,ICurrentUserService currentUser, IDateTime dateTime)
+            : base(context, currentUser, dateTime)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-
         public async Task<Result<bool>> Handle(UpdateAppointmentCommand request, CancellationToken cancellationToken)
         {
             var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+                .FirstOrDefaultAsync(a => a.Id == request.Id && a.Patient.UserId==currentUserId, cancellationToken);
 
             if (appointment == null)
                 return Result<bool>.Failure("Appointment not found");
@@ -25,7 +23,7 @@ namespace ClinicAI.Application.Features.Appointments.Commands.UpdateAppointment
             if (appointment.Status == "Cancelled")
                 return Result<bool>.Failure("Cannot update cancelled appointment");
 
-            if (appointment.AppointmentDate < DateTime.Today)
+            if (appointment.AppointmentDate < _dateTime.dateTimeUtcNow)
                 return Result<bool>.Failure("Cannot update past appointments");
 
             var endTime = request.StartTime.Add(TimeSpan.FromMinutes(20));

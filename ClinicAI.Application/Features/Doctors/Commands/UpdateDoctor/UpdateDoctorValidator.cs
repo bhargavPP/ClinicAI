@@ -1,8 +1,9 @@
-﻿using FluentValidation;
+﻿using ClinicAI.Application.Features.Patients.Commands.UpdatePatient;
+using FluentValidation;
 
 namespace ClinicAI.Application.Features.Doctors.Commands.UpdateDoctor
 {
-    public class UpdateDoctorValidator:AbstractValidator<UpdateDoctorCommand>
+    public class UpdateDoctorValidator : AbstractValidator<UpdateDoctorCommand>
     {
         public UpdateDoctorValidator()
         {

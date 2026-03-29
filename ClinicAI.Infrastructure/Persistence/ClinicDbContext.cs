@@ -6,9 +6,12 @@ namespace ClinicAI.Infrastructure.Persistence
 {
     public class ClinicDbContext : DbContext, IClinicDbContext
     {
-        public ClinicDbContext(DbContextOptions<ClinicDbContext> options) : base(options)
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IDateTime _dateTime;
+        public ClinicDbContext(DbContextOptions<ClinicDbContext> options, ICurrentUserService currentUserService,IDateTime dateTime ) : base(options)
         {
-
+            _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+            _dateTime = dateTime;
         }
         public DbSet<Doctor> Doctors => Set<Doctor>();
         public DbSet<Patient> Patients => Set<Patient>();
@@ -19,6 +22,12 @@ namespace ClinicAI.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Patient>().HasQueryFilter(p => !p.IsDeleted);
+            modelBuilder.Entity<Appointment>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<DoctorsAvailability>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<Doctor>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDeleted);
+
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Doctor>(entity =>
             {
@@ -29,7 +38,6 @@ namespace ClinicAI.Infrastructure.Persistence
                 entity.Property(a => a.Specialization).IsRequired();
 
             });
-
 
             modelBuilder.Entity<Patient>(entity =>
             {
@@ -61,7 +69,7 @@ namespace ClinicAI.Infrastructure.Persistence
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasKey(d => d.id);
+                entity.HasKey(d => d.Id);
                 entity.Property(a => a.Email).IsRequired();
                 entity.Property(a => a.PasswordHash).IsRequired();
 
@@ -85,6 +93,30 @@ namespace ClinicAI.Infrastructure.Persistence
                       .HasForeignKey(da => da.DoctorId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var userId = _currentUserService.UserId;
+
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedAt = _dateTime.dateTimeUtcNow; 
+                    if (userId != Guid.Empty)
+                        entry.Entity.CreatedBy = userId;
+                }
+
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.UpdatedAt = _dateTime.dateTimeUtcNow;
+                    if (userId != Guid.Empty)
+                        entry.Entity.UpdatedBy = userId;
+                }
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

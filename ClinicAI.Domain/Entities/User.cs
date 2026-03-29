@@ -1,8 +1,8 @@
 ﻿    namespace ClinicAI.Domain.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
-        public Guid id {  get; set; }
+     //   public Guid id {  get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public List<Patient> Patients { get; set; } = new();

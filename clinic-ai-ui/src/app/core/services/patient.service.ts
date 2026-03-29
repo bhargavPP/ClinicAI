@@ -17,4 +17,11 @@ export class PatientService {
   getPatient() {
     return this.http.get<any[]>(this.apiUrl);
   }
+  updatePatient(id: string, data: any) {
+    return this.http.put<any[]>(`${this.apiUrl}/${id}`, data);
+  }
+
+  deletePatient(id: string) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

@@ -41,7 +41,7 @@ namespace ClinicAI.API.Controllers
 
             return Ok(result);
         }
-        [HttpGet("appointments")]
+        [HttpGet]
         public async Task<IActionResult> GetAppointments([FromQuery] Guid? patientId)
         {
             var result = await _mediator.Send(new GetAppointmentsQuery

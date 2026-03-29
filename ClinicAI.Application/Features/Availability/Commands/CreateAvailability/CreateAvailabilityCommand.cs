@@ -1,11 +1,12 @@
-﻿using MediatR;
+﻿using ClinicAI.Application.common.Models;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ClinicAI.Application.Features.Availability.Commands.CreateAvailability
 {
-    public class CreateAvailabilityCommand:IRequest<Guid>
+    public class CreateAvailabilityCommand:IRequest<Result<Guid>>
     {
         public Guid DoctorId { get; set; }
         public DateTime Date { get; set; }

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using ClinicAI.Application.Features.Patients.Commands.DeletePatient;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -7,7 +7,7 @@
         public DateTime ExpiresAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsRevoked { get; set; } = false;
-        public string? RevokedReason { get; set; }
+        public string? RevokedReason { get; set; }  
 
         // FK
         public Guid UserId { get; set; }          // matches User.id type (Guid)

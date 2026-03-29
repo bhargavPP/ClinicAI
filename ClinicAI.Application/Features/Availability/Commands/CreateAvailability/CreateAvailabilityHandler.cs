@@ -1,31 +1,45 @@
-﻿using ClinicAI.Application.Interfaces;
+﻿using ClinicAI.Application.common.Models;
+using ClinicAI.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicAI.Application.Features.Availability.Commands.CreateAvailability
 {
-    public class CreateAvailabilityHandler : IRequestHandler<CreateAvailabilityCommand, Guid>
+    public class CreateAvailabilityHandler :BaseHandler, IRequestHandler<CreateAvailabilityCommand, Result<Guid>>
     {
-        private readonly IClinicDbContext _context;
-        public CreateAvailabilityHandler(IClinicDbContext context)
+        public CreateAvailabilityHandler(IClinicDbContext context, ICurrentUserService currentUser, IDateTime dateTime)
+            : base(context, currentUser, dateTime)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task<Guid> Handle(CreateAvailabilityCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateAvailabilityCommand request, CancellationToken cancellationToken)
         {
-            var exists = await _context.DoctorsAvailabilities.AnyAsync(a =>
-                a.DoctorId == request.DoctorId &&
-                a.Date == request.Date &&
-                ((request.StartTime >= a.StartTime && request.StartTime < a.EndTime) ||
-                 (request.EndTime > a.StartTime && request.EndTime <= a.EndTime) ||
-                 (request.StartTime <= a.StartTime && request.EndTime >= a.EndTime)),
-                cancellationToken);
+            // ✅ Validate doctor
+            var doctorExists = await _context.Doctors
+                .AnyAsync(d => d.Id == request.DoctorId, cancellationToken);
+
+            if (!doctorExists)
+                return Result<Guid>.Failure("Doctor not found");
+
+            // ✅ Validate time
+            if (request.StartTime >= request.EndTime)
+                return Result<Guid>.Failure("Start time must be before end time");
+
+            // ❗ Prevent past date
+            if (request.Date.Date < _dateTime.dateTimeUtcNow)
+                return Result<Guid>.Failure("Cannot create availability in the past");
+
+            // 🔥 Simplified overlap check
+            var exists = await _context.DoctorsAvailabilities
+                .Where(a => a.DoctorId == request.DoctorId &&
+                            a.Date.Date == request.Date.Date)
+                .AnyAsync(a => request.StartTime < a.EndTime &&
+                               request.EndTime > a.StartTime,
+                          cancellationToken);
 
             if (exists)
-            {
-                throw new InvalidOperationException("The doctor already has an availability that overlaps with the specified time.");
-            }
+                return Result<Guid>.Failure("Overlapping availability exists");
 
+            // ✅ Create
             var availability = new Domain.Entities.DoctorsAvailability
             {
                 Id = Guid.NewGuid(),
@@ -35,9 +49,11 @@ namespace ClinicAI.Application.Features.Availability.Commands.CreateAvailability
                 EndTime = request.EndTime,
                 IsAvailable = request.IsAvailable
             };
+
             _context.DoctorsAvailabilities.Add(availability);
             await _context.SaveChangesAsync(cancellationToken);
-            return availability.Id;
+
+            return Result<Guid>.Success(availability.Id, "Availability created successfully");
         }
     }
 }

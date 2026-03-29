@@ -61,7 +61,13 @@
             <span *ngIf="isSidebarOpen">⚙️ Admin</span>
           </a>
         </li>
-
+        <!-- ⚙️ Admin (Patient only) -->
+        <li class="nav-item mb-2"
+            *ngIf="auth.hasRole('Patient')">
+          <a routerLink="/patient" routerLinkActive="active" class="nav-link text-white">
+            <span *ngIf="isSidebarOpen">⚙️ Patient</span>
+          </a>
+        </li>
       </ul>
     </div>
 

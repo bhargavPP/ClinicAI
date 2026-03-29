@@ -5,26 +5,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicAI.Application.Features.Appointments.Commands.CancelAppointment
 {
-    public class CancelAppointmentHandler : IRequestHandler<CancelAppointmentCommand, Result<bool>>
+    public class CancelAppointmentHandler :BaseHandler, IRequestHandler<CancelAppointmentCommand, Result<bool>>
     {
-        private readonly IClinicDbContext _context;
-
-        public CancelAppointmentHandler(IClinicDbContext context)
+        public CancelAppointmentHandler(IClinicDbContext context, ICurrentUserService currentUser, IDateTime dateTime)
+            : base(context, currentUser, dateTime)
         {
-            _context = context;
         }
 
         public async Task<Result<bool>> Handle(CancelAppointmentCommand request, CancellationToken cancellationToken)
         {
             var appointment = await _context.Appointments
-       .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+       .FirstOrDefaultAsync(a => a.Id == request.Id && a.PatientId == currentUserId, cancellationToken);
 
             if (appointment == null)
                 return Result<bool>.Failure("Appointment not found");
 
             var appointmentDateTime = appointment.AppointmentDate.Add(appointment.StartTime);
 
-            if (appointmentDateTime < DateTime.Now)
+            if (appointmentDateTime < _dateTime.dateTimeUtcNow)
                 return Result<bool>.Failure("Cannot cancel past appointments");
 
             // Optional: prevent double cancel
@@ -32,10 +30,10 @@ namespace ClinicAI.Application.Features.Appointments.Commands.CancelAppointment
                 return Result<bool>.Failure("Cannot cancel past appointments");
 
             appointment.Status = "Cancelled";
-
+            
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Result<bool>.Failure("Appointment already cancelled");
+            return Result<bool>.Success(true);
 
         }
     }

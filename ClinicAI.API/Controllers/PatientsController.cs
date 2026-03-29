@@ -1,8 +1,9 @@
 ﻿using ClinicAI.Application.Features.Patients.Commands.CreatePatient;
+using ClinicAI.Application.Features.Patients.Commands.DeletePatient;
+using ClinicAI.Application.Features.Patients.Commands.UpdatePatient;
 using ClinicAI.Application.Features.Patients.Queries.GetPatients;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAI.API.Controllers
@@ -28,6 +29,23 @@ namespace ClinicAI.API.Controllers
         public async Task<IActionResult> GetPatients()
         {
             var result = await _mediator.Send(new GetPatientsQuery());
+            return Ok(result);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _mediator.Send(new DeletePatientCommand { Id = id });
+            return Ok(result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, UpdatePatientCommand command)
+        {
+            if (id != command.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
     }

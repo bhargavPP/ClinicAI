@@ -12,5 +12,6 @@ namespace ClinicAI.Application.Features.Patients.Commands.CreatePatient
         public string Phone { get; set; } = null!;
         public DateTime DateOfBirth { get; set; }
 
+        public string RelationshipToUser { get; set; } = "Self";
     }
 }

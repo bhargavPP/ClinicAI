@@ -1,7 +1,4 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClinicAI.Application.Features.Doctors.Commands.DeleteDoctor
 {

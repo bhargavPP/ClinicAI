@@ -18,11 +18,10 @@ import { AuthInterceptor } from './core/interceptors/auth-interceptor';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { DoctorCalendarComponent } from './features/doctor/doctor-calendar/doctor-calendar.component';
 import { AppointmentModel } from './shared/appointment-model/appointment-model';
+import { PatientComponent } from './features/patient/patient/patient.component';
 
 @NgModule({
-  declarations: [  
-  
-    
+  declarations: [    
   ],
   imports: [
     BrowserModule,
@@ -37,7 +36,7 @@ import { AppointmentModel } from './shared/appointment-model/appointment-model';
     DoctorAdminComponent,
     DoctorAvailabilityComponent,
     ToastComponent, ConfirmComponent, ReactiveFormsModule, AuthModalComponent,
-    FullCalendarModule, DoctorCalendarComponent, AppointmentModel
+    FullCalendarModule, DoctorCalendarComponent, AppointmentModel, PatientComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

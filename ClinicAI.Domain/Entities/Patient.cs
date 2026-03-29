@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClinicAI.Domain.Entities
+﻿namespace ClinicAI.Domain.Entities
 {
-    public class Patient
+    public class Patient:BaseEntity
     {
-        public Guid Id { get; set; }
+     //   public Guid Id { get; set; }
 
         public string Name { get; set; } = null!;
 
@@ -17,7 +13,7 @@ namespace ClinicAI.Domain.Entities
         public DateTime DateOfBirth { get; set; }
 
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-        public string? RelationshipToUser { get; set; } = null;
+        public string? RelationshipToUser { get; set; } = "Self";
         public Guid? UserId { get; set; } 
         public User User { get; set; } = null!;
     }

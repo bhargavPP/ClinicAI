@@ -1,17 +1,13 @@
 ﻿using ClinicAI.Application.Interfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClinicAI.Application.Features.Patients.Commands.CreatePatient
 {
-    public class CreatePatientHandler :IRequestHandler<CreatePatientCommand,Guid>
+    public class CreatePatientHandler : BaseHandler, IRequestHandler<CreatePatientCommand, Guid>
     {
-        private readonly IClinicDbContext _context;
-        public CreatePatientHandler(IClinicDbContext context)
+        public CreatePatientHandler(IClinicDbContext context, ICurrentUserService currentUser,IDateTime dateTime) 
+            : base(context, currentUser,dateTime)
         {
-            _context = context??throw new ArgumentNullException(nameof(context));
         }
         public async Task<Guid> Handle(CreatePatientCommand request, CancellationToken cancellationToken)
         {
@@ -21,7 +17,10 @@ namespace ClinicAI.Application.Features.Patients.Commands.CreatePatient
                 Name = request.Name,
                 Email = request.Email,
                 Phone = request.Phone,
-                DateOfBirth = request.DateOfBirth
+                DateOfBirth = request.DateOfBirth,
+                UserId = currentUserId,
+                RelationshipToUser = request.RelationshipToUser,
+                CreatedBy = currentUserId,
             };
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync(cancellationToken);

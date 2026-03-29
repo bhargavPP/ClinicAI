@@ -5,25 +5,32 @@ using ClinicAI.Application.Constants;
 using ClinicAI.Application.common.Models;
 namespace ClinicAI.Application.Features.Appointments.Commands.CreateAppointment
 {
-    public class CreateAppointmentHandler : IRequestHandler<CreateAppointmentCommand, Result<Guid>>
+    public class CreateAppointmentHandler : BaseHandler, IRequestHandler<CreateAppointmentCommand, Result<Guid>>
     {
-        private readonly IClinicDbContext _context;
-        public CreateAppointmentHandler(IClinicDbContext context)
+
+        public CreateAppointmentHandler(IClinicDbContext context, ICurrentUserService currentUser, IDateTime dateTime)
+            : base(context, currentUser, dateTime)
         {
-            _context = context;
         }
         public async Task<Result<Guid>> Handle(CreateAppointmentCommand request, CancellationToken cancellationToken)
         {
+
             var doctorExists = await _context.Doctors.AnyAsync(d => d.Id == request.DoctorId, cancellationToken);
 
             if (!doctorExists)
-               return Result<Guid>.Failure("Doctor not found");
+                return Result<Guid>.Failure("Doctor not found");
 
             var patientExists = await _context.Patients.AnyAsync(p => p.Id == request.PatientId, cancellationToken);
 
             if (!patientExists)
                 return Result<Guid>.Failure("Patient not found");
 
+            var patient = await _context.Patients
+    .FirstOrDefaultAsync(p => p.Id == request.PatientId
+                           && p.UserId == _currentUser.UserId);
+
+            if (!patientExists)
+                return Result<Guid>.Failure("Invalid Patient");
 
             // ✅ Compute EndTime internally
             var endTime = request.StartTime.Add(
@@ -48,7 +55,7 @@ namespace ClinicAI.Application.Features.Appointments.Commands.CreateAppointment
                 return Result<Guid>.Failure("Doctor not available");
 
             if (request.StartTime < availability.StartTime || endTime > availability.EndTime)
-              return Result<Guid>.Failure("Outside availability");
+                return Result<Guid>.Failure("Outside availability");
             var appointment = new Domain.Entities.Appointment
             {
                 Id = Guid.NewGuid(),

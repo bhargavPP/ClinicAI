@@ -27,7 +27,7 @@ namespace ClinicAI.Application.Features.Users.Command
 
             var user = new User
             {
-                id = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Email = request.Email,
                 Phone = request.Phone,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
@@ -45,7 +45,7 @@ namespace ClinicAI.Application.Features.Users.Command
                       accessToken,
                       refreshToken,
                       3600,
-                      new UserDto(user.id, user.FullName, user.Email, user.Role)
+                      new UserDto(user.Id, user.FullName, user.Email, user.Role)
                   ),
                   "User registered successfully"
               );

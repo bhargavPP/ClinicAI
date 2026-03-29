@@ -1,0 +1,131 @@
+<div class="card shadow-sm border-0 mb-3">
+
+  <!-- 🔷 HEADER -->
+  <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+    <div>
+      <div class="fw-semibold">Patient Management</div>
+      <small class="text-light opacity-75">Home / Patient / Family</small>
+    </div>
+  </div>
+
+  <!-- 🔷 FORM -->
+  <div class="card-body py-2">
+
+    <div class="row g-2 align-items-end">
+
+      <div class="col-md-2">
+        <input class="form-control form-control-sm"
+               placeholder="Name"
+               [(ngModel)]="model.name" />
+      </div>
+
+      <div class="col-md-2">
+        <input class="form-control form-control-sm"
+               placeholder="Email"
+               [(ngModel)]="model.email" />
+      </div>
+
+      <div class="col-md-2">
+        <input class="form-control form-control-sm"
+               placeholder="Phone"
+               [(ngModel)]="model.phone" />
+      </div>
+
+      <div class="col-md-2">
+        <input type="date"
+               class="form-control form-control-sm"
+               [(ngModel)]="model.dateOfBirth" />
+      </div>
+
+      <div class="col-md-2">
+        <select class="form-select form-select-sm"
+                [(ngModel)]="model.relationshipToUser">
+          <option value="Self">Self</option>
+          <option value="Wife">Wife</option>
+          <option value="Husband">Husband</option>
+          <option value="Son">Son</option>
+          <option value="Daughter">Daughter</option>
+          <option value="Father">Father</option>
+          <option value="Mother">Mother</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm w-100" (click)="save()">
+          {{ editMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<hr />
+
+<!-- 🔷 TABLE -->
+<div class="container-fluid mt-3 px-1">
+
+  <div class="card shadow-sm border-0 w-100">
+
+    <div class="card-header bg-dark text-white d-flex justify-content-between">
+      <span>{{ editMode ? 'Edit Patient' : 'Patient List' }}</span>
+
+      <button *ngIf="editMode"
+              class="btn btn-sm btn-light"
+              (click)="resetForm()">
+        Cancel
+      </button>
+    </div>
+
+    <div class="card-body p-2">
+
+      <div class="table-responsive">
+        <table class="table table-sm align-middle table-hover mb-0">
+
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>DOB</th>
+              <th>Relationship</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let p of patients"
+                [class.table-warning]="editMode && editingId === p.id">
+
+              <td class="fw-semibold">{{ p.name }}</td>
+              <td>{{ p.email }}</td>
+              <td>{{ p.phone }}</td>
+              <td>{{ p.dateOfBirth | date:'yyyy-MM-dd' }}</td>
+              <td>{{ p.relationshipToUser }}</td>
+
+              <td class="text-center">
+                <button class="btn btn-secondary btn-sm me-2 px-3"
+                        (click)="edit(p)">
+                  Edit
+                </button>
+
+                <button class="btn btn-danger btn-sm px-3"
+                        (click)="delete(p.id,p.relationshipToUser)"
+                        [disabled]="p.relationshipToUser === 'Self'">
+                  Delete
+                </button>
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

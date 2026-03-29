@@ -4,28 +4,46 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicAI.Application.Features.Availability.Commands.UpdateAvailability
 {
-    public class UpdateAvailabilityHandler :IRequestHandler<UpdateAvailabilityCommand,bool>
+    public class UpdateAvailabilityHandler : BaseHandler, IRequestHandler<UpdateAvailabilityCommand,bool>
     {
-        private readonly IClinicDbContext _context;
-        public UpdateAvailabilityHandler(IClinicDbContext context)
+        public UpdateAvailabilityHandler(IClinicDbContext context, ICurrentUserService currentUser, IDateTime dateTime)
+            : base(context, currentUser, dateTime)
         {
-            _context = context??throw new ArgumentException(nameof(context));
         }
 
         public async Task<bool> Handle(UpdateAvailabilityCommand request, CancellationToken cancellationToken)
         {
-            var doctor = await _context.DoctorsAvailabilities
-                .FirstOrDefaultAsync(d=>d.Id==request.Id, cancellationToken);
+            var availability = await _context.DoctorsAvailabilities
+        .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 
-            if(doctor == null)
-            {
-            throw new KeyNotFoundException($"Doctor not found.");
-            }
+            if (availability == null)
+                throw new KeyNotFoundException("Availability not found");
 
-            doctor.StartTime = request.StartTime;
-            doctor.EndTime = request.EndTime;
-            doctor.Date = request.Date;
-            doctor.IsAvailable = request.IsAvailable;
+            // ✅ Validate time
+            if (request.StartTime >= request.EndTime)
+                throw new Exception("Start time must be before end time");
+
+            // ❗ Prevent past date
+            if (request.Date.Date < _dateTime. dateTimeUtcNow)
+                throw new Exception("Cannot update past availability");
+
+            // 🔥 Overlap check (exclude current record)
+            var overlap = await _context.DoctorsAvailabilities
+                .Where(a => a.DoctorId == availability.DoctorId &&
+                            a.Date.Date == request.Date.Date &&
+                            a.Id != request.Id)
+                .AnyAsync(a => request.StartTime < a.EndTime &&
+                               request.EndTime > a.StartTime,
+                          cancellationToken);
+
+            if (overlap)
+                throw new Exception("Overlapping availability exists");
+
+            // ✅ Update
+            availability.StartTime = request.StartTime;
+            availability.EndTime = request.EndTime;
+            availability.Date = request.Date;
+            availability.IsAvailable = request.IsAvailable;
 
             await _context.SaveChangesAsync(cancellationToken);
 

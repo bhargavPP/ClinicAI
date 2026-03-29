@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicAI.Application.Features.Availability.Commands.DeleteAvailability
 {
-    public class DeleteAvailabilityHandler:IRequestHandler<DeleteAvailabilityCommand,bool>
+    public class DeleteAvailabilityHandler:BaseHandler, IRequestHandler<DeleteAvailabilityCommand,bool>
     {
-        private readonly IClinicDbContext _context;
-        public DeleteAvailabilityHandler(IClinicDbContext context)
+   
+        public DeleteAvailabilityHandler(IClinicDbContext context,ICurrentUserService currentUser, IDateTime dateTime)
+            : base(context, currentUser, dateTime)
         {
-            _context = context??throw new Exception(nameof(context));
         }
 
         public async Task<bool> Handle(DeleteAvailabilityCommand request, CancellationToken cancellationToken)
@@ -22,7 +22,9 @@ namespace ClinicAI.Application.Features.Availability.Commands.DeleteAvailability
                 throw new Exception("Doctor not found");
                 //return false; // Doctor not found
             }
-            _context.DoctorsAvailabilities.Remove(doctor);
+            doctor.IsDeleted = true;
+            doctor.DeletedAt = _dateTime.dateTimeUtcNow;
+            doctor.DeletedBy = currentUserId;
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;

@@ -1,8 +1,5 @@
 ﻿using ClinicAI.Application.common.Models;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClinicAI.Application.Features.Appointments.Commands.CreateAppointment
 {

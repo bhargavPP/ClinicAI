@@ -1,8 +1,8 @@
 ﻿namespace ClinicAI.Domain.Entities
 {
-    public class Appointment
+    public class Appointment : BaseEntity
     {
-        public Guid Id { get; set; }
+       // public Guid Id { get; set; }
 
         public Guid DoctorId { get; set; }
 
