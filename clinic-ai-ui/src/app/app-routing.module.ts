@@ -72,7 +72,10 @@ const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Patient'] }
   },
-
+  { path: 'about', loadComponent: () => import('./features/public/about/about.component').then(m => m.AboutComponent) },
+  { path: 'services', loadComponent: () => import('./features/public/service-detail/service-detail.component').then(m => m.ServiceDetailComponent) },
+  { path: 'doctorservice', loadComponent: () => import('./features/public/doctors/doctors.component').then(m => m.DoctorsComponent) },
+  { path: 'contact', loadComponent: () => import('./features/public/contact/contact.component').then(m => m.ContactComponent) },
   // Default redirect
   { path: '', redirectTo: 'clinic/myClinic', pathMatch: 'full' },
 

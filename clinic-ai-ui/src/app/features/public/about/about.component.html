@@ -1,0 +1,118 @@
+<!-- ─── HERO ───────────────────────────────────────────────────── -->
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-inner">
+      <div class="page-hero-content">
+        <span class="label">Who We Are</span>
+        <h1>Built on trust.<br>Driven by <em>care.</em></h1>
+        <p>Meridian Health was founded with a single belief — that every patient deserves world-class care delivered with dignity, compassion, and transparency.</p>
+      </div>
+      <div class="page-hero-image">
+        <img src="https://images.unsplash.com/photo-1504813184591-01572f98c85f?w=800&q=80" alt="Our clinic" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MISSION ────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="mission-grid">
+      <div class="mission-text reveal">
+        <span class="label">Our Mission</span>
+        <h2>Healthcare that puts people first.</h2>
+        <p>At Meridian Health, we combine the latest medical advancements with a deeply human approach. Every decision we make — from how we design our spaces to how our doctors communicate — is rooted in the patient experience.</p>
+        <p>We believe great healthcare isn't just about treatment. It's about listening, understanding, and walking alongside every patient through their journey.</p>
+        <div class="mission-values">
+          <div class="value-pill">✦ Integrity</div>
+          <div class="value-pill">✦ Excellence</div>
+          <div class="value-pill">✦ Compassion</div>
+          <div class="value-pill">✦ Innovation</div>
+        </div>
+      </div>
+      <div class="mission-image reveal" style="transition-delay:.15s">
+        <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=700&q=80" alt="Doctor with patient" />
+        <div class="mission-badge">
+          <strong>Est. 2014</strong>
+          <span>Over a decade of care</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS ──────────────────────────────────────────────────── -->
+<div class="stats-band">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat reveal">
+        <div class="stat-number">5,000+</div>
+        <div class="stat-label">Patients Treated</div>
+      </div>
+      <div class="stat reveal" style="transition-delay:.1s">
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Specialist Doctors</div>
+      </div>
+      <div class="stat reveal" style="transition-delay:.2s">
+        <div class="stat-number">10+</div>
+        <div class="stat-label">Years of Excellence</div>
+      </div>
+      <div class="stat reveal" style="transition-delay:.3s">
+        <div class="stat-number">98%</div>
+        <div class="stat-label">Patient Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── STORY ──────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal" style="text-align:center">
+      <span class="label">Our Story</span>
+      <h2>A decade of healing.</h2>
+      <p class="sub center">From a small family clinic to a full-service healthcare facility, our journey has always been guided by one north star — the wellbeing of our community.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item reveal" *ngFor="let item of timeline; let i = index" [style.transition-delay]="(i * 0.12) + 's'">
+        <div class="timeline-year">{{ item.year }}</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── VALUES ─────────────────────────────────────────────────── -->
+<section class="section alt">
+  <div class="container">
+    <div class="section-head reveal" style="text-align:center">
+      <span class="label">Our Values</span>
+      <h2>What guides everything we do.</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal" *ngFor="let v of values; let i = index" [style.transition-delay]="(i * 0.1) + 's'">
+        <div class="value-icon">{{ v.icon }}</div>
+        <h3>{{ v.title }}</h3>
+        <p>{{ v.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ────────────────────────────────────────────────────── -->
+<section class="cta-band">
+  <div class="container">
+    <span class="label">Ready to Begin?</span>
+    <h2>Experience healthcare done right.</h2>
+    <p>Join thousands of patients who trust Meridian Health for their care.</p>
+    <button class="btn-primary" (click)="goToContact()">
+      Book an Appointment
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+    </button>
+  </div>
+</section>

@@ -1,0 +1,81 @@
+<!-- ─── HERO ───────────────────────────────────────────────────── -->
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <span class="label">Our Team</span>
+      <h1>Doctors who truly<br><em>listen.</em></h1>
+      <p>Our physicians are board-certified specialists selected not only for their clinical excellence, but for their commitment to compassionate, patient-centred care.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FILTER ─────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="filter-bar reveal">
+      <button class="filter-btn"
+              *ngFor="let dept of departments"
+              [class.active]="activeDept === dept"
+              (click)="setDept(dept)">
+        {{ dept }}
+      </button>
+    </div>
+
+    <div class="doctors-grid">
+      <div class="doctor-card reveal"
+           *ngFor="let d of filteredDoctors; let i = index"
+           [style.transition-delay]="(i * 0.08) + 's'">
+        <div class="doctor-img-wrap">
+          <img [src]="d.image" [alt]="d.name" />
+          <div class="doctor-dept-badge">{{ d.department }}</div>
+        </div>
+        <div class="doctor-body">
+          <h3>{{ d.name }}</h3>
+          <div class="doctor-spec">{{ d.specialization }}</div>
+          <div class="doctor-exp">{{ d.experience }} of experience</div>
+          <p class="doctor-bio">{{ d.bio }}</p>
+          <div class="doctor-langs">
+            <span class="lang-tag" *ngFor="let lang of d.languages">{{ lang }}</span>
+          </div>
+          <button class="btn-book" (click)="bookDoctor(d)">
+            Book Appointment →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredDoctors.length === 0">
+      <p>No doctors found in this department.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHY US ─────────────────────────────────────────────────── -->
+<section class="section alt">
+  <div class="container">
+    <div class="section-head reveal" style="text-align:center">
+      <span class="label">Why Our Team</span>
+      <h2>The Meridian difference.</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal" *ngFor="let w of whyUs; let i = index" [style.transition-delay]="(i * 0.1) + 's'">
+        <div class="why-icon">{{ w.icon }}</div>
+        <h3>{{ w.title }}</h3>
+        <p>{{ w.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ────────────────────────────────────────────────────── -->
+<section class="cta-band">
+  <div class="container">
+    <span class="label">Ready to Meet Your Doctor?</span>
+    <h2>Start your care journey today.</h2>
+    <p>Our coordinators will match you with the right specialist based on your needs and availability.</p>
+    <button class="btn-primary" (click)="goToContact()">
+      Book an Appointment
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+    </button>
+  </div>
+</section>
