@@ -1,0 +1,412 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meridian Health — Premium Healthcare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+
+  </style>
+</head>
+<body>-->
+
+  <!-- ─── NAVBAR ─────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="#home" class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24"><path d="M12 2v10m0 0 4-4m-4 4-4-4M4 20h16" /></svg>
+        </div>
+        <div>
+          <div class="brand-name">Meridian Health</div>
+          <div class="brand-sub">Premium Healthcare</div>
+        </div>
+      </a>
+
+      <nav class="menu">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#doctors">Doctors</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+        Book Appointment
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ───────────────────────────────────────────── -->
+  <section id="home" class="hero">
+    <div class="container hero-inner">
+      <div class="hero-content">
+        <div class="hero-eyebrow"><span class="label">Premium Healthcare Experience</span></div>
+        <h1>Your Health,<br>Our <em>Priority.</em></h1>
+        <p class="hero-desc">
+          World-class medical care delivered with compassion, precision, and respect for every patient. Experience healthcare that truly cares.
+        </p>
+        <div class="hero-cta">
+          <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+            Book Appointment
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+          </button>
+          <button class="btn-outline" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+            Learn More
+          </button>
+        </div>
+        <div class="hero-badges">
+          <div class="badge"><span class="badge-dot"></span> Board-Certified Doctors</div>
+          <div class="badge"><span class="badge-dot"></span> Same-Day Appointments</div>
+          <div class="badge"><span class="badge-dot"></span> 10+ Years of Care</div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-img-wrap">
+          <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80" alt="Modern clinic interior" />
+        </div>
+        <div class="hero-float">
+          <div class="hero-float-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9z" /></svg>
+          </div>
+          <div class="hero-float-text">
+            <strong>5,000+ Patients</strong>
+            <span>Treated &amp; Recovered</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT ──────────────────────────────────────────── -->
+  <section id="about" class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="label">About Us</span>
+        <h2>Care designed with trust, comfort, and quality.</h2>
+        <p class="sub center">
+          At Meridian Health, we combine clinical expertise with an unwavering commitment to patient wellbeing — creating an environment where healing begins from the moment you walk through our doors.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card reveal">
+          <div class="feature-num">01</div>
+          <h3>Modern Care</h3>
+          <p>Advanced diagnostic equipment paired with evidence-based medicine and genuine patient-first service at every touchpoint.</p>
+        </div>
+        <div class="feature-card reveal" style="transition-delay:.1s">
+          <div class="feature-num">02</div>
+          <h3>Expert Team</h3>
+          <p>Board-certified physicians and specialists with decades of combined clinical experience dedicated to your wellbeing.</p>
+        </div>
+        <div class="feature-card reveal" style="transition-delay:.2s">
+          <div class="feature-num">03</div>
+          <h3>Seamless Booking</h3>
+          <p>Simple, stress-free appointment scheduling with rapid confirmations and clear, transparent communication throughout.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SERVICES ──────────────────────────────────────── -->
+  <section id="services" class="section alt">
+    <div class="container">
+      <div class="section-head reveal" style="text-align:center">
+        <span class="label">Our Services</span>
+        <h2>Comprehensive care for every stage of life.</h2>
+        <p class="sub center">From preventive checkups to specialized treatment, our services are designed around your comfort and confidence.</p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card reveal" onclick="">
+          <div class="service-icon">🫀</div>
+          <h3>Cardiology</h3>
+          <p>Comprehensive heart health services including diagnostics, monitoring, and preventive cardiology programs.</p>
+          <span class="service-link">Learn more →</span>
+        </div>
+        <div class="card reveal" style="transition-delay:.08s">
+          <div class="service-icon">🧠</div>
+          <h3>Neurology</h3>
+          <p>Expert neurological assessment and treatment for conditions affecting the brain, spine, and nervous system.</p>
+          <span class="service-link">Learn more →</span>
+        </div>
+        <div class="card reveal" style="transition-delay:.16s">
+          <div class="service-icon">🦴</div>
+          <h3>Orthopedics</h3>
+          <p>Specialized care for musculoskeletal conditions, sports injuries, and rehabilitation programs.</p>
+          <span class="service-link">Learn more →</span>
+        </div>
+        <div class="card reveal" style="transition-delay:.24s">
+          <div class="service-icon">👁️</div>
+          <h3>Ophthalmology</h3>
+          <p>Complete eye care services including routine exams, LASIK consultations, and surgical interventions.</p>
+          <span class="service-link">Learn more →</span>
+        </div>
+        <div class="card reveal" style="transition-delay:.32s">
+          <div class="service-icon">🩺</div>
+          <h3>General Medicine</h3>
+          <p>Preventive care, annual checkups, chronic disease management, and acute illness treatment.</p>
+          <span class="service-link">Learn more →</span>
+        </div>
+        <div class="card reveal" style="transition-delay:.4s">
+          <div class="service-icon">🧬</div>
+          <h3>Laboratory</h3>
+          <p>In-house diagnostics and pathology with rapid turnaround and precise, reliable results.</p>
+          <span class="service-link">Learn more →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DOCTORS ────────────────────────────────────────── -->
+  <section id="doctors" class="section">
+    <div class="container">
+      <div class="section-head reveal" style="text-align:center">
+        <span class="label">Our Doctors</span>
+        <h2>Experienced professionals you can trust.</h2>
+        <p class="sub center">Our team combines deep clinical expertise with a compassionate approach to every patient interaction.</p>
+      </div>
+
+      <div class="card-grid">
+        <div class="doctor-card reveal">
+          <div class="doctor-avatar-wrap">
+            <img class="doctor-avatar" src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&q=80" alt="Dr. James Harrington" />
+          </div>
+          <h3>Dr. James Harrington</h3>
+          <div class="doctor-spec">Cardiology</div>
+          <div class="doctor-exp">18 years of experience</div>
+        </div>
+        <div class="doctor-card reveal" style="transition-delay:.1s">
+          <div class="doctor-avatar-wrap">
+            <img class="doctor-avatar" src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&q=80" alt="Dr. Aisha Patel" />
+          </div>
+          <h3>Dr. Aisha Patel</h3>
+          <div class="doctor-spec">Neurology</div>
+          <div class="doctor-exp">14 years of experience</div>
+        </div>
+        <div class="doctor-card reveal" style="transition-delay:.2s">
+          <div class="doctor-avatar-wrap">
+            <img class="doctor-avatar" src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=200&q=80" alt="Dr. Marcus Linton" />
+          </div>
+          <h3>Dr. Marcus Linton</h3>
+          <div class="doctor-spec">Orthopedics</div>
+          <div class="doctor-exp">11 years of experience</div>
+        </div>
+        <div class="doctor-card reveal" style="transition-delay:.3s">
+          <div class="doctor-avatar-wrap">
+            <img class="doctor-avatar" src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&q=80" alt="Dr. Sophia Chen" />
+          </div>
+          <h3>Dr. Sophia Chen</h3>
+          <div class="doctor-spec">General Medicine</div>
+          <div class="doctor-exp">9 years of experience</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STATS ──────────────────────────────────────────── -->
+  <div class="stats-band">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat reveal">
+          <div class="stat-number">5,000+</div>
+          <div class="stat-label">Patients Treated</div>
+        </div>
+        <div class="stat reveal" style="transition-delay:.1s">
+          <div class="stat-number">15+</div>
+          <div class="stat-label">Specialist Doctors</div>
+        </div>
+        <div class="stat reveal" style="transition-delay:.2s">
+          <div class="stat-number">10+</div>
+          <div class="stat-label">Years of Excellence</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TESTIMONIALS ──────────────────────────────────── -->
+  <section class="section alt">
+    <div class="container">
+      <div class="section-head reveal" style="text-align:center">
+        <span class="label">Testimonials</span>
+        <h2>What our patients say.</h2>
+      </div>
+      <div class="card-grid">
+        <div class="testimonial-card reveal">
+          <div class="quote-mark">"</div>
+          <div class="stars">★★★★★</div>
+          <p>The care I received was exceptional — attentive, thorough, and genuinely compassionate. The staff made every step easy to understand.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">J</div>
+            <div>
+              <div class="author-name">John Matthews</div>
+              <div class="author-role">Cardiology Patient</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal" style="transition-delay:.1s">
+          <div class="quote-mark">"</div>
+          <div class="stars">★★★★★</div>
+          <p>Very professional and knowledgeable doctors. Booking was seamless, the facility is spotless, and the results were delivered promptly.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">S</div>
+            <div>
+              <div class="author-name">Sarah Okonkwo</div>
+              <div class="author-role">General Medicine Patient</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal" style="transition-delay:.2s">
+          <div class="quote-mark">"</div>
+          <div class="stars">★★★★★</div>
+          <p>Meridian Health gave me the confidence I needed. The diagnostic process was clear, the doctor was brilliant, and recovery was smooth.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">R</div>
+            <div>
+              <div class="author-name">Raj Mehta</div>
+              <div class="author-role">Orthopedics Patient</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── HOURS ──────────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="hours-inner reveal">
+        <div class="hours-hero">
+          <span class="label">Working Hours</span>
+          <h2>We're here when you need us.</h2>
+          <p>Walk-in and scheduled appointments available. Call ahead for urgent care services.</p>
+        </div>
+        <div class="hours-list">
+          <div class="hours-row">
+            <span class="hours-day"><span class="open-dot"></span>Monday</span>
+            <span class="hours-time">9:00 AM – 7:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="hours-day"><span class="open-dot"></span>Tuesday</span>
+            <span class="hours-time">9:00 AM – 7:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="hours-day"><span class="open-dot"></span>Wednesday</span>
+            <span class="hours-time">9:00 AM – 7:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="hours-day"><span class="open-dot"></span>Thursday</span>
+            <span class="hours-time">9:00 AM – 7:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="hours-day"><span class="open-dot"></span>Friday</span>
+            <span class="hours-time">9:00 AM – 7:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="hours-day"><span class="open-dot"></span>Saturday</span>
+            <span class="hours-time">10:00 AM – 4:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="hours-day" style="color:var(--text-3)">Sunday</span>
+            <span class="hours-time closed">Closed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ────────────────────────────────────────── -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="contact-inner">
+        <div class="contact-card reveal">
+          <span class="label">Contact Us</span>
+          <h2>Get in touch with our team.</h2>
+          <p style="margin-top:14px">Our patient coordinators are here to help you schedule appointments, answer questions, and guide you through your care journey.</p>
+
+          <div style="margin-top:24px">
+            <div class="contact-detail">
+              <div class="detail-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>
+              </div>
+              <div>
+                <div class="detail-label">Address</div>
+                <div class="detail-value">150 Main St N, Brampton, ON, Canada</div>
+              </div>
+            </div>
+            <div class="contact-detail">
+              <div class="detail-icon">
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.97 9.81 19.79 19.79 0 01.9 1.18 2 2 0 012.88 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" /></svg>
+              </div>
+              <div>
+                <div class="detail-label">Phone</div>
+                <div class="detail-value">+1 (905) 555-0198</div>
+              </div>
+            </div>
+            <div class="contact-detail">
+              <div class="detail-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+              </div>
+              <div>
+                <div class="detail-label">Email</div>
+                <div class="detail-value">hello@meridianhealth.ca</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="map-wrap reveal" style="transition-delay:.15s">
+          <iframe src="https://www.google.com/maps?q=Brampton,ON,Canada&output=embed"
+                  allowfullscreen="" loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  title="Clinic location map">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ────────────────────────────────────────────── -->
+  <section class="cta-band">
+    <div class="container">
+      <span class="label">Ready to Begin?</span>
+      <h2>Take the first step toward better health.</h2>
+      <p>Booking takes less than two minutes. Our team will confirm your appointment within the hour.</p>
+      <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+        Book Your Appointment
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span class="footer-copy">© 2026 Meridian Health. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── SCROLL REVEAL ──────────────────────────────────── -->
+  <script>const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));</script>
+<!--</body>
+</html>-->

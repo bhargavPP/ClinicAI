@@ -53,7 +53,7 @@
   }
 
 /* NAV LINKS */
-.nav-link {
+/*.nav-link {
   border-radius: 6px;
   padding: 8px 12px;
 }
@@ -61,10 +61,10 @@
   .nav-link.active {
     background-color: #0d6efd;
     color: white !important;
-  }
+  }*/
 
 /* CONTENT */
-.content {
+/*.content {
   transition: all 0.3s ease;
 }
 .fc-event-title,
@@ -86,4 +86,156 @@
 .fc-event-time,
 .fc-event-main-frame {
   display: none !important;
+}*/
+
+/*Public Layout*/
+
+/*.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px;
+  background: linear-gradient(to right, #0d6efd, #4dabf7);
+  color: white;
 }
+
+.hero-left {
+  max-width: 50%;
+}
+
+.hero-right img {
+  width: 300px;
+  border-radius: 10px;
+}*/
+/* BUTTON */
+/*.btn-primary {
+  background: white;
+  color: #0d6efd;
+  border: none;
+  padding: 12px 25px;
+  margin-top: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}*/
+
+/* SECTIONS */
+/*.section {
+  padding: 40px 20px;
+}*/
+
+/* GRID */
+/*.grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}*/
+
+/* CARD */
+/*.card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  width: 220px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}*/
+
+/* ICON */
+/*.icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}*/
+
+/* DOCTOR IMAGE */
+/*.card img {
+  width: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}*/
+
+/* CONTACT */
+/*.contact {
+  background: #f1f3f5;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 40px;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.menu a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #333;
+}
+html {
+  scroll-behavior: smooth;
+}
+.card {
+  transition: 0.3s;
+}
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+.btn-primary {
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
+}*/
+
+/* container */
+/*.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 20px;
+}*/
+
+/* headings */
+/*h1, h2, h3 {
+  margin: 0 0 10px;
+}
+
+h2 {
+  font-size: 28px;
+}*/
+
+/* buttons */
+/*.btn-primary {
+  background: #0d6efd;
+  color: white;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+  .btn-primary:hover {
+    background: #0b5ed7;
+  }*/
+
+/* card */
+/*.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: 0.3s;
+}
+
+  .card:hover {
+    transform: translateY(-5px);
+  }*/
