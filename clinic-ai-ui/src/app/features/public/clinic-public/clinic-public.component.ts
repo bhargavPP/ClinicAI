@@ -105,7 +105,7 @@ export class ClinicPublicComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goToBooking(): void {
-    this.scrollTo('contact');
+    this.router.navigate(['/login']);
   }
 
   openService(slug: string): void {
