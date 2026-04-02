@@ -9,9 +9,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// =========================
+// ✅ LOGGING
+// =========================
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
+Console.WriteLine("🚀 Starting app build...");
 
 // =========================
-// ✅ CORS (Angular + Cookies)
+// ✅ CORS (LOCAL + AZURE)
 // =========================
 builder.Services.AddCors(options =>
 {
@@ -19,14 +27,14 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:4200",
-                "http://localhost:51912"
+                "https://localhost:4200",
+                "https://clinic-ai-ui.azurewebsites.net"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); // 🔥 REQUIRED for cookies
+            .AllowCredentials();
     });
 });
-
 
 // =========================
 // ✅ MediatR
@@ -37,7 +45,6 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(ClinicAI.Application.common.AssemblyReference).Assembly));
 
-
 // =========================
 // ✅ FluentValidation
 // =========================
@@ -46,15 +53,14 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>),
 
 builder.Services.AddValidatorsFromAssembly(typeof(ClinicAI.Application.common.AssemblyReference).Assembly);
 
-
 // =========================
 // ✅ DB Context
 // =========================
+Console.WriteLine("➡️ Configuring DB...");
 builder.Services.AddDbContext<ClinicDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IClinicDbContext, ClinicDbContext>();
-
 
 // =========================
 // ✅ Services
@@ -65,22 +71,28 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddHttpContextAccessor();
 
-
 // =========================
 // ✅ Controllers
 // =========================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddOpenApi();
-
 
 // =========================
-// ✅ JWT AUTH (COOKIE BASED)
+// ✅ JWT AUTH
 // =========================
+Console.WriteLine("➡️ Configuring JWT...");
+
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
+        var key = builder.Configuration["Jwt:Key"];
+
+        if (string.IsNullOrEmpty(key))
+        {
+            Console.WriteLine("❌ JWT Key is NULL");
+        }
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -92,13 +104,12 @@ builder.Services.AddAuthentication("Bearer")
             ValidAudience = builder.Configuration["Jwt:Audience"],
 
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+                Encoding.UTF8.GetBytes(key ?? "fallback_key")
             ),
 
             ClockSkew = TimeSpan.Zero
         };
 
-        // 🔥 READ TOKEN FROM COOKIE
         options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
         {
             OnMessageReceived = context =>
@@ -117,65 +128,71 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 
-
 // =========================
 // ✅ BUILD APP
 // =========================
 var app = builder.Build();
 
-
-// =========================
-// ✅ GLOBAL EXCEPTION HANDLER
-// =========================
-app.UseMiddleware<ClinicAI.API.Middleware.ExceptionMiddleware>();
-
+Console.WriteLine("✅ App build completed");
 
 // =========================
 // ✅ DEV TOOLS
 // =========================
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// =========================
+// ✅ PIPELINE (CRITICAL ORDER)
+// =========================
+Console.WriteLine("➡️ Applying middleware...");
 
-// =========================
-// ✅ HTTPS (ONLY PROD)
-// =========================
+// 🔥 CORS MUST BE FIRST
+app.UseCors("AllowAngular");
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
 
-
-// =========================
-// ✅ CORS (MUST BE BEFORE AUTH)
-// =========================
-app.UseCors("AllowAngular");
-
-
-// =========================
-// ✅ AUTH (ORDER MATTERS)
-// =========================
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 // =========================
 // ✅ ENDPOINTS
 // =========================
+Console.WriteLine("➡️ Mapping endpoints...");
+
 app.MapControllers();
-
+app.MapGet("/health", () => "API is running");
 
 // =========================
-// ✅ SEED DATA
+// ✅ DB INIT
 // =========================
-await DbInitializer.SeedAdminAsync(app.Services);
+using (var scope = app.Services.CreateScope())
+{
+    Console.WriteLine("➡️ DB initialization started");
 
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+
+        db.Database.Migrate();
+        await DbInitializer.SeedAdminAsync(app.Services);
+
+        Console.WriteLine("✅ DB initialized successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("❌ DB ERROR:");
+        Console.WriteLine(ex.ToString());
+    }
+}
 
 // =========================
 // ✅ RUN
 // =========================
+Console.WriteLine("🔥 Starting app...");
 app.Run();

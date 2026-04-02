@@ -20,7 +20,7 @@ namespace ClinicAI.Infrastructure.Persistence
             var admin = new User
             {
                 Id = Guid.NewGuid(),
-                Email = "admin@test.com",
+                Email = "admin@test.com" ,
                 FullName = "Admin User",
                 Phone = "1234567890",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
