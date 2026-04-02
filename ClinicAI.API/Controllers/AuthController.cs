@@ -81,7 +81,8 @@ public class AuthController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
-            Expires = DateTime.UtcNow.AddMinutes(60)
+            Expires = DateTime.UtcNow.AddMinutes(1),
+            Domain = "clinic-ai-api.azurewebsites.net"
         });
 
         Response.Cookies.Append("refreshToken", data.RefreshToken, new CookieOptions

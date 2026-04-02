@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace ClinicAI.API.Middleware
@@ -8,10 +9,11 @@ namespace ClinicAI.API.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-
-        public ExceptionMiddleware(RequestDelegate next)
+        private readonly ILogger<ExceptionMiddleware> _logger;
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
 
@@ -23,8 +25,9 @@ namespace ClinicAI.API.Middleware
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                var traceid = context.TraceIdentifier;
                 context.Response.ContentType = "application/json";
+                _logger.LogError(ex, "❌ Unhandled exception | TraceId: {TraceId}", traceid+ex.Message);
 
                 // Handle FluentValidation exceptions with structured response
                 if (ex is FluentValidation.ValidationException vex)

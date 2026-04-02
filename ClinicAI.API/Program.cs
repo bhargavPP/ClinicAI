@@ -1,3 +1,4 @@
+using ClinicAI.API.Middleware;
 using ClinicAI.Application.Interfaces;
 using ClinicAI.Infrastructure.Interface;
 using ClinicAI.Infrastructure.Persistence;
@@ -15,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
-
+builder.Services.AddApplicationInsightsTelemetry();
 Console.WriteLine("🚀 Starting app build...");
 
 // =========================
@@ -86,8 +87,8 @@ Console.WriteLine("➡️ Configuring JWT...");
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        var key = builder.Configuration["Jwt:Key"];
-
+        var key = builder.Configuration["JwtKey"];
+        Console.WriteLine($"JWT KEY VALUE: {key}");
         if (string.IsNullOrEmpty(key))
         {
             Console.WriteLine("❌ JWT Key is NULL");
@@ -100,8 +101,8 @@ builder.Services.AddAuthentication("Bearer")
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
 
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer = builder.Configuration["JwtIssuer"],
+            ValidAudience = builder.Configuration["JwtAudience"],
 
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(key ?? "fallback_key")
@@ -151,7 +152,17 @@ Console.WriteLine("➡️ Applying middleware...");
 
 // 🔥 CORS MUST BE FIRST
 app.UseCors("AllowAngular");
+app.Use(async (context, next) =>
+{
+    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
 
+    logger.LogInformation("➡️ {Method} {Path}", context.Request.Method, context.Request.Path);
+
+    await next();
+
+    logger.LogInformation("⬅️ Response: {StatusCode}", context.Response.StatusCode);
+});
+app.UseMiddleware<ExceptionMiddleware>();
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
@@ -166,8 +177,7 @@ app.UseAuthorization();
 Console.WriteLine("➡️ Mapping endpoints...");
 
 app.MapControllers();
-app.MapGet("/health", () => "API is running");
-
+ 
 // =========================
 // ✅ DB INIT
 // =========================

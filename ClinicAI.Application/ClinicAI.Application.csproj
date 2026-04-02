@@ -19,8 +19,4 @@
     <ProjectReference Include="..\ClinicAI.Domain\ClinicAI.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Auth\" />
-  </ItemGroup>
-
 </Project>

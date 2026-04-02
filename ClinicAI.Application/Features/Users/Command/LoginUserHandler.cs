@@ -4,6 +4,7 @@ using ClinicAI.Application.Interfaces;
 using ClinicAI.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ClinicAI.Application.Features.Users.Command
 {
@@ -12,11 +13,12 @@ namespace ClinicAI.Application.Features.Users.Command
     {
         private readonly IClinicDbContext _context;
         private readonly IJwtTokenService _jwt;
-
-        public LoginUserHandler(IClinicDbContext context, IJwtTokenService jwt)
+        private readonly ILogger<LoginUserHandler> _logger;
+        public LoginUserHandler(IClinicDbContext context, IJwtTokenService jwt,ILogger<LoginUserHandler> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _jwt = jwt ?? throw new ArgumentNullException(nameof(jwt));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Result<AuthResponse>> Handle(
@@ -27,13 +29,17 @@ namespace ClinicAI.Application.Features.Users.Command
                 .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
 
             if (user == null)
+            {
+                _logger.LogWarning("User not found: {Email}", request.Email);
                 return Result<AuthResponse>.Failure("Invalid Credentials");
-
+            }
             var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
             if (!valid)
+            {
+                _logger.LogWarning("Invalid Password: {Email}", request.Email);
                 return Result<AuthResponse>.Failure("Invalid Credentials");
-
+            }
             // ✅ Generate tokens
             var accessToken = _jwt.GenerateAccessToken(user);
             var refreshToken = _jwt.GenerateRefreshToken();
@@ -47,7 +53,7 @@ namespace ClinicAI.Application.Features.Users.Command
             });
 
             await _context.SaveChangesAsync(cancellationToken);
-
+            _logger.LogWarning("token saved");
             // ✅ Return correct response
             return Result<AuthResponse>.Success(
                 new AuthResponse(
