@@ -56,7 +56,7 @@ stages:
                   inputs:
                     azureSubscription: 'clinic-azure-service-connection'
                     appName: 'clinic-ai-api'
-                    package: $(Pipeline.Workspace)/api-drop/api
+                    package: $(Pipeline.Workspace)/api-drop
       - deployment: DeployAngular
         environment: 'production'
         strategy:
