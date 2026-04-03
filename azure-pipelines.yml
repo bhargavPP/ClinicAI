@@ -1,19 +1,70 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- master
+  branches:
+    include:
+      - main
 
-pool:
-  vmImage: ubuntu-latest
+stages:
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - stage: Build_API
+    jobs:
+      - job: BuildDotNet
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              version: '8.x'
+          - script: dotnet restore
+            workingDirectory: 'YourApiFolder'
+          - script: dotnet build --configuration Release
+            workingDirectory: 'YourApiFolder'
+          - script: dotnet test --no-build
+            workingDirectory: 'YourApiFolder'
+          - script: dotnet publish -c Release -o $(Build.ArtifactStagingDirectory)/api
+            workingDirectory: 'YourApiFolder'
+          - publish: $(Build.ArtifactStagingDirectory)/api
+            artifact: api-drop
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - stage: Build_Angular
+    jobs:
+      - job: BuildAngular
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+          - script: npm ci
+            workingDirectory: 'YourAngularFolder'
+          - script: npm run build -- --configuration production
+            workingDirectory: 'YourAngularFolder'
+          - publish: YourAngularFolder/dist
+            artifact: angular-drop
+
+  - stage: Deploy
+    dependsOn:
+      - Build_API
+      - Build_Angular
+    jobs:
+      - deployment: DeployAPI
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  inputs:
+                    azureSubscription: 'clinic-azure-service-connection'
+                    appName: 'clinic-ai-api'
+                    package: $(Pipeline.Workspace)/api-drop
+      - deployment: DeployAngular
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  inputs:
+                    azureSubscription: 'clinic-azure-service-connection'
+                    appName: 'clinic-ai-ui'
+                    package: $(Pipeline.Workspace)/angular-drop
