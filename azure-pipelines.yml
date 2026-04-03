@@ -67,4 +67,4 @@ stages:
                   inputs:
                     azureSubscription: 'clinic-azure-service-connection'
                     appName: 'clinic-ai-ui'
-                    package: $(Pipeline.Workspace)/angular-drop/ui.zip
+                    package: $(Pipeline.Workspace)/angular-drop
