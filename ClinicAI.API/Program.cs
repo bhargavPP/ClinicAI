@@ -17,7 +17,6 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Services.AddApplicationInsightsTelemetry();
-Console.WriteLine("🚀 Starting app build...");
 
 // =========================
 // ✅ CORS (LOCAL + AZURE)
@@ -57,7 +56,6 @@ builder.Services.AddValidatorsFromAssembly(typeof(ClinicAI.Application.common.As
 // =========================
 // ✅ DB Context
 // =========================
-Console.WriteLine("➡️ Configuring DB...");
 builder.Services.AddDbContext<ClinicDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -82,7 +80,6 @@ builder.Services.AddSwaggerGen();
 // =========================
 // ✅ JWT AUTH
 // =========================
-Console.WriteLine("➡️ Configuring JWT...");
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -134,8 +131,6 @@ builder.Services.AddAuthorization();
 // =========================
 var app = builder.Build();
 
-Console.WriteLine("✅ App build completed");
-
 // =========================
 // ✅ DEV TOOLS
 // =========================
@@ -148,9 +143,8 @@ if (app.Environment.IsDevelopment())
 // =========================
 // ✅ PIPELINE (CRITICAL ORDER)
 // =========================
-Console.WriteLine("➡️ Applying middleware...");
 
-// 🔥 CORS MUST BE FIRST
+//  CORS MUST BE FIRST
 app.UseCors("AllowAngular");
 app.Use(async (context, next) =>
 {
@@ -174,8 +168,6 @@ app.UseAuthorization();
 // =========================
 // ✅ ENDPOINTS
 // =========================
-Console.WriteLine("➡️ Mapping endpoints...");
-
 app.MapControllers();
  
 // =========================
@@ -183,7 +175,6 @@ app.MapControllers();
 // =========================
 using (var scope = app.Services.CreateScope())
 {
-    Console.WriteLine("➡️ DB initialization started");
 
     try
     {
@@ -192,7 +183,6 @@ using (var scope = app.Services.CreateScope())
         db.Database.Migrate();
         await DbInitializer.SeedAdminAsync(app.Services);
 
-        Console.WriteLine("✅ DB initialized successfully");
     }
     catch (Exception ex)
     {
@@ -204,5 +194,4 @@ using (var scope = app.Services.CreateScope())
 // =========================
 // ✅ RUN
 // =========================
-Console.WriteLine("🔥 Starting app...");
 app.Run();
