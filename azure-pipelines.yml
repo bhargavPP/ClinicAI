@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - main
+      - master
 
 stages:
 
@@ -15,13 +15,13 @@ stages:
             inputs:
               version: '8.x'
           - script: dotnet restore
-            workingDirectory: 'ClinicAI.Api'
+            workingDirectory: 'ClinicAI.API'
           - script: dotnet build --configuration Release
-            workingDirectory: 'ClinicAI.Api'
+            workingDirectory: 'ClinicAI.API'
           - script: dotnet test --no-build
-            workingDirectory: 'ClinicAI.Api'
+            workingDirectory: 'ClinicAI.API'
           - script: dotnet publish -c Release -o $(Build.ArtifactStagingDirectory)/api
-            workingDirectory: 'ClinicAI.Api'
+            workingDirectory: 'ClinicAI.API'
           - publish: $(Build.ArtifactStagingDirectory)/api
             artifact: api-drop
 
