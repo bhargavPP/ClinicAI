@@ -157,7 +157,7 @@ http://localhost:4200
 
 ## Author
 
-Developed as part of a client Requirement
+Developed based on client Requirement
 
 ---
 
