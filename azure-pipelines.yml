@@ -15,13 +15,13 @@ stages:
             inputs:
               version: '8.x'
           - script: dotnet restore
-            workingDirectory: 'YourApiFolder'
+            workingDirectory: 'ClinicAI.Api'
           - script: dotnet build --configuration Release
-            workingDirectory: 'YourApiFolder'
+            workingDirectory: 'ClinicAI.Api'
           - script: dotnet test --no-build
-            workingDirectory: 'YourApiFolder'
+            workingDirectory: 'ClinicAI.Api'
           - script: dotnet publish -c Release -o $(Build.ArtifactStagingDirectory)/api
-            workingDirectory: 'YourApiFolder'
+            workingDirectory: 'ClinicAI.Api'
           - publish: $(Build.ArtifactStagingDirectory)/api
             artifact: api-drop
 
@@ -35,10 +35,10 @@ stages:
             inputs:
               versionSpec: '20.x'
           - script: npm ci
-            workingDirectory: 'YourAngularFolder'
+            workingDirectory: 'clinic-ai-ui'
           - script: npm run build -- --configuration production
-            workingDirectory: 'YourAngularFolder'
-          - publish: YourAngularFolder/dist
+            workingDirectory: 'clinic-ai-ui'
+          - publish: clinic-ai-ui/dist
             artifact: angular-drop
 
   - stage: Deploy
@@ -56,7 +56,7 @@ stages:
                   inputs:
                     azureSubscription: 'clinic-azure-service-connection'
                     appName: 'clinic-ai-api'
-                    package: $(Pipeline.Workspace)/api-drop
+                    package: $(Pipeline.Workspace)/api-drop/api.zip
       - deployment: DeployAngular
         environment: 'production'
         strategy:
@@ -67,4 +67,4 @@ stages:
                   inputs:
                     azureSubscription: 'clinic-azure-service-connection'
                     appName: 'clinic-ai-ui'
-                    package: $(Pipeline.Workspace)/angular-drop
+                    package: $(Pipeline.Workspace)/angular-drop/ui.zip
