@@ -13,7 +13,7 @@ stages:
         steps:
           - task: UseDotNet@2
             inputs:
-              version: '10.x'
+              version: '10.0.x'
           - script: dotnet restore
             workingDirectory: 'ClinicAI.API'
           - script: dotnet build --configuration Release
@@ -56,7 +56,7 @@ stages:
                   inputs:
                     azureSubscription: 'clinic-azure-service-connection'
                     appName: 'clinic-ai-api'
-                    package: $(Pipeline.Workspace)/api-drop/api.zip
+                    package: $(Pipeline.Workspace)/api-drop
       - deployment: DeployAngular
         environment: 'production'
         strategy:
@@ -67,4 +67,4 @@ stages:
                   inputs:
                     azureSubscription: 'clinic-azure-service-connection'
                     appName: 'clinic-ai-ui'
-                    package: $(Pipeline.Workspace)/angular-drop/ui.zip
+                    package: $(Pipeline.Workspace)/angular-drop
