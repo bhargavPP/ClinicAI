@@ -4,9 +4,12 @@ using ClinicAI.Infrastructure.Interface;
 using ClinicAI.Infrastructure.Persistence;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +61,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(ClinicAI.Application.common.As
 // =========================
 builder.Services.AddDbContext<ClinicDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddHealthChecks().AddDbContextCheck<ClinicDbContext>("Database").AddCheck("Self",()=>HealthCheckResult.Healthy());
 builder.Services.AddScoped<IClinicDbContext, ClinicDbContext>();
 
 // =========================
@@ -125,7 +128,7 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddHealthChecks();
 // =========================
 // ✅ BUILD APP
 // =========================
@@ -190,8 +193,22 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine(ex.ToString());
     }
 }
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        var result = JsonSerializer.Serialize(new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(e => new {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                error = e.Value.Exception?.Message
+            })
+        });
 
-// =========================
-// ✅ RUN
-// =========================
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(result);
+    }
+}).AllowAnonymous();
 app.Run();

@@ -26,7 +26,16 @@ namespace ClinicAI.Infrastructure.Persistence
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
                 Role = "Admin"
             };
-            //var admin = new User
+            var doctor = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "doctor@test.com",
+                Phone = "1234567890",
+                FullName = "Doctor User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+                Role = "Doctor"
+
+            };       //var admin = new User
             //{
             //    Id = Guid.NewGuid(),
             //    Email = "patient@test.com",
@@ -36,6 +45,8 @@ namespace ClinicAI.Infrastructure.Persistence
             //    Role = "patient"
             //};
             context.Users.Add(admin);
+            await context.SaveChangesAsync();
+            context.Users.Add(doctor);
             await context.SaveChangesAsync();
         }
     }
