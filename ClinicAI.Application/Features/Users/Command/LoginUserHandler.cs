@@ -43,17 +43,18 @@ namespace ClinicAI.Application.Features.Users.Command
             // ✅ Generate tokens
             var accessToken = _jwt.GenerateAccessToken(user);
             var refreshToken = _jwt.GenerateRefreshToken();
+            var hashedToken = BCrypt.Net.BCrypt.HashPassword(refreshToken);
 
             // ✅ Save refresh token
             _context.RefreshTokens.Add(new RefreshToken
             {
-                Token = refreshToken,
+                Token = hashedToken,
                 UserId = user.Id,
                 ExpiresAt = DateTime.UtcNow.AddDays(7)
             });
 
             await _context.SaveChangesAsync(cancellationToken);
-            _logger.LogWarning("token saved");
+            _logger.LogInformation("User {UserId} logged in successfully", user.Id);
             // ✅ Return correct response
             return Result<AuthResponse>.Success(
                 new AuthResponse(

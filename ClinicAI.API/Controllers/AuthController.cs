@@ -65,7 +65,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         var refreshToken = Request.Cookies["refreshToken"];
-
+        if (string.IsNullOrEmpty(refreshToken))
+            return Unauthorized("No refresh token");
         await _mediator.Send(new LogoutCommand(refreshToken));
 
         Response.Cookies.Delete("accessToken");
@@ -81,8 +82,8 @@ public class AuthController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
-            Expires = DateTime.UtcNow.AddMinutes(1),
-            Domain = "clinic-ai-api.azurewebsites.net"
+            Expires = DateTime.UtcNow.AddMinutes(10)
+            //,            Domain = "clinic-ai-api.azurewebsites.net"
         });
 
         Response.Cookies.Append("refreshToken", data.RefreshToken, new CookieOptions

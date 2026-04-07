@@ -12,7 +12,8 @@ namespace ClinicAI.Infrastructure.Persistence
             var context = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
 
             await context.Database.MigrateAsync();
-
+            if (await context.Users.AnyAsync(u => u.Role == "Doctor"))
+                return;
             // ✅ Check if admin already exists
             if (await context.Users.AnyAsync(u => u.Role == "Admin"))
                 return;

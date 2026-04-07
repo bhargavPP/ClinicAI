@@ -24,15 +24,30 @@ namespace ClinicAI.Application.Features.Users.Command
             CancellationToken cancellationToken)
         {
             // ✅ FIX: Include works only with EF namespace
-            var storedToken = await _context.RefreshTokens
-                .Include(x => x.User)
-                .FirstOrDefaultAsync(
-                    x => x.Token == request.RefreshToken,
-                    cancellationToken);
+            var tokens = await _context.RefreshTokens
+                                     .Include(x => x.User)
+                                     .Where(x => !x.IsRevoked)
+                                     .ToListAsync(cancellationToken);
 
-            if (storedToken == null || !storedToken.IsActive)
+            var storedToken = tokens.FirstOrDefault(t =>
+                BCrypt.Net.BCrypt.Verify(request.RefreshToken, t.Token));
+
+            if (storedToken == null || storedToken.IsRevoked ||  storedToken.ExpiresAt < DateTime.UtcNow)
+            {
                 return Result<AuthResponse>.Failure("Invalid or expired refresh token");
+            }
+            if (storedToken.IsRevoked)
+            {
+                // Possible token theft
+                var userTokens = _context.RefreshTokens
+                    .Where(t => t.UserId == storedToken.UserId);
 
+                _context.RefreshTokens.RemoveRange(userTokens);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return Result<AuthResponse>.Failure("Token reuse detected");
+            }
             var user = storedToken.User;
 
             // ✅ Revoke old token
