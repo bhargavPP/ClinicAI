@@ -72,7 +72,8 @@ builder.Services.AddScoped<IClinicDbContext, ClinicDbContext>();
 builder.Services.AddScoped<IDateTime, DateTimeService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+//builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<IQueueService, AzureQueueService>();
 builder.Services.AddHttpContextAccessor();
 
 // =========================

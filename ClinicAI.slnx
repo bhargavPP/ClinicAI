@@ -6,5 +6,6 @@
   <Project Path="ClinicAI.API/ClinicAI.API.csproj" />
   <Project Path="ClinicAI.Application/ClinicAI.Application.csproj" />
   <Project Path="ClinicAI.Domain/ClinicAI.Domain.csproj" />
+  <Project Path="ClinicAI.Functions/ClinicAI.Functions.csproj" Id="c4988392-5ab6-484a-96b4-a9562a66c8d1" />
   <Project Path="ClinicAI.Infrastructure/ClinicAI.Infrastructure.csproj" />
 </Solution>
