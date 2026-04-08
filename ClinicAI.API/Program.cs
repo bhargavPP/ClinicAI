@@ -3,6 +3,7 @@ using ClinicAI.Application.Interfaces;
 using ClinicAI.Infrastructure.Interface;
 using ClinicAI.Infrastructure.Persistence;
 using FluentValidation;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,8 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Services.AddApplicationInsightsTelemetry();
-
+builder.Services.AddHangfire(config => config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHangfireServer();
 // =========================
 // ✅ CORS (LOCAL + AZURE)
 // =========================
@@ -61,7 +63,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(ClinicAI.Application.common.As
 // =========================
 builder.Services.AddDbContext<ClinicDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddHealthChecks().AddDbContextCheck<ClinicDbContext>("Database").AddCheck("Self",()=>HealthCheckResult.Healthy());
+builder.Services.AddHealthChecks().AddDbContextCheck<ClinicDbContext>("Database").AddCheck("Self", () => HealthCheckResult.Healthy());
 builder.Services.AddScoped<IClinicDbContext, ClinicDbContext>();
 
 // =========================
@@ -70,7 +72,7 @@ builder.Services.AddScoped<IClinicDbContext, ClinicDbContext>();
 builder.Services.AddScoped<IDateTime, DateTimeService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpContextAccessor();
 
 // =========================
@@ -172,7 +174,7 @@ app.UseAuthorization();
 // ✅ ENDPOINTS
 // =========================
 app.MapControllers();
- 
+
 // =========================
 // ✅ DB INIT
 // =========================
@@ -200,7 +202,8 @@ app.MapHealthChecks("/health", new HealthCheckOptions
         var result = JsonSerializer.Serialize(new
         {
             status = report.Status.ToString(),
-            checks = report.Entries.Select(e => new {
+            checks = report.Entries.Select(e => new
+            {
                 name = e.Key,
                 status = e.Value.Status.ToString(),
                 error = e.Value.Exception?.Message
@@ -211,4 +214,5 @@ app.MapHealthChecks("/health", new HealthCheckOptions
         await context.Response.WriteAsync(result);
     }
 }).AllowAnonymous();
+app.UseHangfireDashboard();
 app.Run();
