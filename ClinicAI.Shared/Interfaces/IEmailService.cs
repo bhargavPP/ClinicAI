@@ -1,4 +1,4 @@
-﻿namespace ClinicAI.Application.Interfaces
+﻿namespace ClinicAI.Shared
 {
     public interface IEmailService
     {

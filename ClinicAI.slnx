@@ -8,4 +8,5 @@
   <Project Path="ClinicAI.Domain/ClinicAI.Domain.csproj" />
   <Project Path="ClinicAI.Functions/ClinicAI.Functions.csproj" Id="c4988392-5ab6-484a-96b4-a9562a66c8d1" />
   <Project Path="ClinicAI.Infrastructure/ClinicAI.Infrastructure.csproj" />
+  <Project Path="ClinicAI.Shared/ClinicAI.Shared.csproj" Id="941f6e48-b87b-4156-a784-8542d50fc45b" />
 </Solution>

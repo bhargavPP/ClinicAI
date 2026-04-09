@@ -14,5 +14,7 @@ namespace ClinicAI.Application.Interfaces
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 
         DbSet<RefreshToken> RefreshTokens { get;  }
-    }
+
+        DbSet<EmailLog> EmailLogs { get; }
+        }
 }

@@ -1,6 +1,7 @@
 using Azure.Storage.Queues;
 using ClinicAI.API.Middleware;
 using ClinicAI.Application.Interfaces;
+
 using ClinicAI.Infrastructure.Interface;
 using ClinicAI.Infrastructure.Persistence;
 using FluentValidation;
@@ -12,7 +13,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // =========================
@@ -87,7 +87,13 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 //builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddSingleton<IQueueService, AzureQueueService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<ClinicAI.Shared.IEmailService, EmailService>();
+builder.Services.AddScoped<ClinicAI.Shared.Interfaces.IEmailLogService, ClinicAI.Infrastructure.Interface.EmailLogService>();
 
+// Application Insights
+//builder.Services.AddApplicationInsightsTelemetryWorkerService();
+//builder.Services.ConfigureFunctionsApplicationInsights();
 // =========================
 // ✅ Controllers
 // =========================

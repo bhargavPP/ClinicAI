@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\IEmailService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
@@ -17,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClinicAI.Domain\ClinicAI.Domain.csproj" />
+    <ProjectReference Include="..\ClinicAI.Shared\ClinicAI.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 ==================
 
 Add Migration
-Add-Migration -Name "InitialDbContextMigration" -OutputDir "Migrations" -Context "ClinicAI.Infrastructure.Persistence.ClinicDbContext" -Project "ClinicAI.Infrastructure"
+Add-Migration -Name "AddedEmailLogEntity" -OutputDir "Migrations" -Context "ClinicAI.Infrastructure.Persistence.ClinicDbContext" -Project "ClinicAI.Infrastructure"
 
 Remove-Migration 
 

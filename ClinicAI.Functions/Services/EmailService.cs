@@ -1,11 +1,13 @@
-﻿using System.Net;
+﻿ 
+using ClinicAI.Shared;
+using System.Net;
 using System.Net.Mail;
 
 namespace ClinicAI.Functions.Services
 {
     public class EmailService : IEmailService
     {
-        public async Task sendAsync(string to, string subject, string body)
+        public async Task SendEmailAsync(string to,string name, string subject, string body)
         {
             var host = Environment.GetEnvironmentVariable("EmailHost");
             var port = int.Parse(Environment.GetEnvironmentVariable("EmailPort"));

@@ -19,7 +19,7 @@ namespace ClinicAI.Infrastructure.Persistence
         public DbSet<User> Users => Set<User>();
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<DoctorsAvailability> DoctorsAvailabilities => Set<DoctorsAvailability>();
-
+        public DbSet<EmailLog> EmailLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Patient>().HasQueryFilter(p => !p.IsDeleted);
@@ -92,6 +92,27 @@ namespace ClinicAI.Infrastructure.Persistence
                       .WithMany(d => d.DoctorsAvailabilities)
                       .HasForeignKey(da => da.DoctorId)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<EmailLog>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasIndex(e => e.UserId);         // fast lookup by user
+                entity.HasIndex(e => e.Status);         // fast lookup by status
+                entity.HasIndex(e => e.CorrelationId);  // fast lookup by correlation
+                entity.HasIndex(e => e.CreatedAt);      // fast lookup by date
+
+                entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.SetNull); // keep logs even if user deleted
+
+                entity.Property(e => e.Type)
+                      .HasConversion<string>(); // store as string not int
+
+                entity.Property(e => e.Status)
+                      .HasConversion<string>();
             });
         }
 

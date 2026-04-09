@@ -1,4 +1,4 @@
-﻿using ClinicAI.Application.Interfaces;
+﻿using ClinicAI.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 namespace ClinicAI.Infrastructure.Interface
@@ -14,7 +14,7 @@ namespace ClinicAI.Infrastructure.Interface
             _httpClient = httpClient;
             _logger = logger;
         }
-        public async Task SendEmail(string toEmail, string name, string subject, string body)
+        public async Task SendEmailAsync(string toEmail, string name, string subject, string body)
         {
             //var apiKey = _configuration["Brevo:ApiKey"];
 

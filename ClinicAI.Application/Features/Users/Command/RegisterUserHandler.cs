@@ -46,9 +46,12 @@ namespace ClinicAI.Application.Features.Users.Command
 
             var emailMessage = new EmailMessage
             {
+                UserId = user.Id,           // ← track which user
                 ToEmail = user.Email,
-                Subject = "User Registration information",
-                Body = $"Hello {user.FullName}, your account has been created successfully."
+                Subject = "Welcome to ClinicAI",
+                Body = $"Hello {user.FullName}, your account has been created successfully.",
+                Type = EmailType.Registration,
+                CorrelationId = Guid.NewGuid().ToString()
             };
             await _queueService.EnqueuAsync(emailMessage);
 
