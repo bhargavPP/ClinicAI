@@ -4,7 +4,7 @@ using ClinicAI.Shared.Contracts;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
- 
+
 namespace ClinicAI.Functions;
 
 public class EmailProcessor
