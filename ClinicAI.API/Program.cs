@@ -246,13 +246,36 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 //app.UseHangfireDashboard();
 
 // Add before app.Run()
-var queueService = new QueueClient("UseDevelopmentStorage=true", "email-queue-poison");
-await queueService.CreateIfNotExistsAsync();
-await queueService.ClearMessagesAsync();
+var storageConnection =
+    builder.Configuration["StorageConnectionString"] ??
+    builder.Configuration.GetConnectionString("StorageConnection");
 
-var queueService2 = new QueueClient("UseDevelopmentStorage=true", "email-queue");
-await queueService2.CreateIfNotExistsAsync();
-await queueService2.ClearMessagesAsync();
+if (!string.IsNullOrEmpty(storageConnection))
+{
+    try
+    {
+        var poisonQueue = new QueueClient(storageConnection, "email-queue-poison");
+        var emailQueue = new QueueClient(storageConnection, "email-queue");
 
-Console.WriteLine("✅ Queues cleared");
+        await poisonQueue.CreateIfNotExistsAsync();
+        await emailQueue.CreateIfNotExistsAsync();
+
+        if (app.Environment.IsDevelopment())
+        {
+            await poisonQueue.ClearMessagesAsync();
+            await emailQueue.ClearMessagesAsync();
+            Console.WriteLine("✅ Queues cleared (DEV only)");
+        }
+
+        Console.WriteLine($"✅ Queues initialized using: {storageConnection}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Queue init error: {ex.Message}");
+    }
+}
+else
+{
+    Console.WriteLine("⚠️ StorageConnectionString missing");
+}
 app.Run();
