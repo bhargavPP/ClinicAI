@@ -39,8 +39,7 @@ const routes: Routes = [
   {
     path: 'doctors',
     component: DoctorListComponent,
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['Patient'] }
+    canActivate: [authGuard] 
   },
   {
     path: 'book',
@@ -80,7 +79,13 @@ const routes: Routes = [
   { path: '', redirectTo: 'clinic/myClinic', pathMatch: 'full' },
 
   // ❗ MUST BE LAST
-  { path: '**', redirectTo: 'clinic/myClinic' }
+  { path: '**', redirectTo: 'clinic/myClinic' },
+  {
+    path: 'unauthorized',
+    loadComponent: () =>
+      import('./features/public/unauthorized/unauthorized.component')
+        .then(m => m.UnauthorizedComponent)
+  }
 ];
 
 @NgModule({

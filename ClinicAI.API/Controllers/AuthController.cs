@@ -1,7 +1,9 @@
 ﻿using ClinicAI.Application.DTOs;
 using ClinicAI.Application.Features.Users.Command;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -43,7 +45,22 @@ public class AuthController : ControllerBase
 
         return Ok(new { user = data.User });
     }
+    [HttpGet("me")]
+    [Authorize]
+    public IActionResult Me()
+    {
+        if (!User.Identity?.IsAuthenticated ?? true)
+            return Unauthorized();
 
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        var role = User.FindFirst(ClaimTypes.Role)?.Value;
+        var name = User.FindFirstValue(ClaimTypes.Name); // ← add this
+
+        if (userId == null) return Unauthorized();
+
+        return Ok(new { userId, email, role, name });  
+    }
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh()
     {
@@ -77,11 +94,13 @@ public class AuthController : ControllerBase
 
     private void SetCookies(AuthResponse data)
     {
+        var isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+
         Response.Cookies.Append("accessToken", data.AccessToken, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddMinutes(10)
             //,            Domain = "clinic-ai-api.azurewebsites.net"
         });
@@ -89,8 +108,8 @@ public class AuthController : ControllerBase
         Response.Cookies.Append("refreshToken", data.RefreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddDays(7)
         });
     }

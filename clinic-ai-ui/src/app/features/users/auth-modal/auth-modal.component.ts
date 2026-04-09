@@ -58,7 +58,7 @@ export class AuthModalComponent {
     this.errorMessage = '';
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        
+        console.log('Login success, navigating...');
         this.isLoading = false;
         // this.router.navigate(['/book']);
         this.router.navigateByUrl('/doctors');

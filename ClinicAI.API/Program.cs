@@ -1,3 +1,4 @@
+using Azure.Storage.Queues;
 using ClinicAI.API.Middleware;
 using ClinicAI.Application.Interfaces;
 using ClinicAI.Infrastructure.Interface;
@@ -20,9 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
-builder.Services.AddApplicationInsightsTelemetry();
-builder.Services.AddHangfire(config => config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddHangfireServer();
+//builder.Services.AddHangfire(config => config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddHangfireServer();
 // =========================
 // ✅ CORS (LOCAL + AZURE)
 // =========================
@@ -30,14 +30,26 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:4200",
-                "https://localhost:4200",
-                "https://clinic-ai-ui.azurewebsites.net"
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.WithOrigins(
+                    "http://localhost:4200",
+                    "https://localhost:4200",
+                    "http://localhost:51912"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+        else
+        {
+            policy.WithOrigins(
+                    "https://clinic-ai-ui.azurewebsites.net"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
     });
 });
 
@@ -90,7 +102,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        var key = builder.Configuration["JwtKey"];
+        var key = builder.Configuration["Jwt:Key"];
         Console.WriteLine($"JWT KEY VALUE: {key}");
         if (string.IsNullOrEmpty(key))
         {
@@ -104,8 +116,8 @@ builder.Services.AddAuthentication("Bearer")
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
 
-            ValidIssuer = builder.Configuration["JwtIssuer"],
-            ValidAudience = builder.Configuration["JwtAudience"],
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
 
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(key ?? "fallback_key")
@@ -126,17 +138,28 @@ builder.Services.AddAuthentication("Bearer")
                 }
 
                 return Task.CompletedTask;
+            },
+            OnAuthenticationFailed = context =>
+            {
+                // ← ADD THIS
+                Console.WriteLine($"❌ Auth failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                // ← ADD THIS
+                Console.WriteLine($"✅ Token validated for: {context.Principal?.Identity?.Name}");
+                return Task.CompletedTask;
             }
         };
     });
 
 builder.Services.AddAuthorization();
-builder.Services.AddHealthChecks();
 // =========================
 // ✅ BUILD APP
 // =========================
 var app = builder.Build();
-
+Console.WriteLine($"ENVIRONMENT: {builder.Environment.EnvironmentName}");
 // =========================
 // ✅ DEV TOOLS
 // =========================
@@ -164,9 +187,8 @@ app.Use(async (context, next) =>
 });
 app.UseMiddleware<ExceptionMiddleware>();
 if (!app.Environment.IsDevelopment())
-{
     app.UseHttpsRedirection();
-}
+
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -215,5 +237,16 @@ app.MapHealthChecks("/health", new HealthCheckOptions
         await context.Response.WriteAsync(result);
     }
 }).AllowAnonymous();
-app.UseHangfireDashboard();
+//app.UseHangfireDashboard();
+
+// Add before app.Run()
+var queueService = new QueueClient("UseDevelopmentStorage=true", "email-queue-poison");
+await queueService.CreateIfNotExistsAsync();
+await queueService.ClearMessagesAsync();
+
+var queueService2 = new QueueClient("UseDevelopmentStorage=true", "email-queue");
+await queueService2.CreateIfNotExistsAsync();
+await queueService2.ClearMessagesAsync();
+
+Console.WriteLine("✅ Queues cleared");
 app.Run();

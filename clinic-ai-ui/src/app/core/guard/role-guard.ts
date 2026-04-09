@@ -11,7 +11,7 @@ export const roleGuard: CanActivateFn = (route) => {
   const user = auth.getCurrentUser();
 
   if (!user) {
-    router.navigate(['/login']);
+    router.createUrlTree(['/login']);
     return false;
   } 
   //console.log(user);
@@ -29,6 +29,6 @@ export const roleGuard: CanActivateFn = (route) => {
 
   if (hasRole) return true;
 
-  router.navigate(['/unauthorized']);
+  router.createUrlTree(['/unauthorized']);
   return false;
 };

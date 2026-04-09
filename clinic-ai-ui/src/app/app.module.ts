@@ -1,4 +1,4 @@
-import { NgModule, provideZoneChangeDetection } from '@angular/core';
+import { NgModule, provideZoneChangeDetection, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -19,24 +19,24 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { DoctorCalendarComponent } from './features/doctor/doctor-calendar/doctor-calendar.component';
 import { AppointmentModel } from './shared/appointment-model/appointment-model';
 import { PatientComponent } from './features/patient/patient/patient.component';
-
+import { authInitializer } from './core/init/auth.init';
+import { UnauthorizedComponent } from './features/public/unauthorized/unauthorized.component';
 @NgModule({
-  declarations: [    
-  ],
+  declarations: [    ],
   imports: [
     BrowserModule,
     CommonModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    // If components are standalone, import them here instead of declaring
-    AppComponent,
+     AppComponent,
     DoctorListComponent,
     BookAppointmentComponent,
     DoctorAdminComponent,
     DoctorAvailabilityComponent,
     ToastComponent, ConfirmComponent, ReactiveFormsModule, AuthModalComponent,
-    FullCalendarModule, DoctorCalendarComponent, AppointmentModel, PatientComponent
+    FullCalendarModule, DoctorCalendarComponent, AppointmentModel, PatientComponent,
+    UnauthorizedComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
@@ -44,7 +44,13 @@ import { PatientComponent } from './features/patient/patient/patient.component';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
-      multi: true            // ← required
+      multi: true            
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: authInitializer,
+      deps: [],
+      multi: true
     }
   ],
   bootstrap: [AppComponent]

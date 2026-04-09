@@ -30,16 +30,16 @@ namespace ClinicAI.Infrastructure.Interface
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config["JwtKey"]!)
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
             );
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expiryMinutes = int.Parse(_config["JwtAccessTokenExpiryMinutes"] ?? "60");
+            var expiryMinutes = int.Parse(_config["Jwt:ExpiryMinutes"] ?? "60");
 
             var token = new JwtSecurityToken(
-                issuer: _config["JwtIssuer"],
-                audience: _config["JwtAudience"],
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
                 signingCredentials: creds
@@ -52,7 +52,10 @@ namespace ClinicAI.Infrastructure.Interface
         public string GenerateRefreshToken()
         {
             var randomBytes = RandomNumberGenerator.GetBytes(64);
-            return Convert.ToBase64String(randomBytes);
+            return Convert.ToBase64String(randomBytes)
+                                    .Replace("+", "-")
+                                    .Replace("/", "_")
+                                    .Replace("=", ""); 
         }
     }
 }

@@ -8,13 +8,12 @@ import { AuthService } from '../services/auth.service';
 export class AuthInterceptor implements HttpInterceptor {
 
   private isRefreshing = false;
-  private refreshSubject = new BehaviorSubject<string | null>(null);
+  private refreshSubject = new BehaviorSubject<boolean>(false);
 
   constructor(private auth: AuthService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    // ✅ Always send cookies
     const clonedRequest = req.clone({
       withCredentials: true
     });
@@ -22,24 +21,43 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(clonedRequest).pipe(
       catchError((err: HttpErrorResponse) => {
 
-        // 🔁 Handle 401 → refresh token
-        if (err.status === 401 && !this.isRefreshing) {
+        // ❌ Ignore auth endpoints
+        if (req.url.includes('/auth/login') ||
+          req.url.includes('/auth/register') ||
+          req.url.includes('/auth/refresh') ||
+          req.url.includes('/auth/me')) {
+          return throwError(() => err);
+        }
 
-          this.isRefreshing = true;
+        // 🔁 Handle 401
+        if (err.status === 401) {
 
-          return this.auth.refreshToken().pipe(
-            switchMap(() => {
-              this.isRefreshing = false;
+          if (!this.isRefreshing) {
+            this.isRefreshing = true;
+            this.refreshSubject.next(false);
 
-              // ✅ Retry original request
-              return next.handle(req.clone({ withCredentials: true }));
-            }),
-            catchError(error => {
-              this.isRefreshing = false;
-              this.auth.logout();
-              return throwError(() => error);
-            })
-          );
+            return this.auth.refreshToken().pipe(
+              switchMap(() => {
+                this.isRefreshing = false;
+                this.refreshSubject.next(true);
+
+                return next.handle(req.clone({ withCredentials: true }));
+              }),
+              catchError(error => {
+                this.isRefreshing = false;
+              //  this.auth.logout();
+                console.log("error", error);
+                return throwError(() => error);
+              })
+            );
+          } else {
+            // ⏳ Wait until refresh completes
+            return this.refreshSubject.pipe(
+              filter(done => done === true),
+              take(1),
+              switchMap(() => next.handle(req.clone({ withCredentials: true })))
+            );
+          }
         }
 
         return throwError(() => err);
@@ -47,48 +65,4 @@ export class AuthInterceptor implements HttpInterceptor {
     );
   }
 
-  private addToken(req: HttpRequest<any>, token: string): HttpRequest<any> {
-    return req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
-    });
-  }
-
-  private handle401(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-    if (!this.isRefreshing) {
-      this.isRefreshing = true;
-      this.refreshSubject.next(null);
-
-      const refreshToken = this.auth.getRefreshToken();
-
-      if (!refreshToken) {
-        this.auth.logout();
-        return throwError(() => 'No refresh token');
-      }
-
-      return this.auth.refreshToken().pipe(
-        switchMap((res) => {
-          this.isRefreshing = false;
-
-          // ✅ Store new tokens
-          this.auth.StoreTokens(res.accessToken, res.refreshToken);
-
-          this.refreshSubject.next(res.accessToken);
-
-          return next.handle(this.addToken(req, res.accessToken));
-        }),
-        catchError((err) => {
-          this.isRefreshing = false;
-          this.auth.logout();
-          return throwError(() => err);
-        })
-      );
-    }
-
-    return this.refreshSubject.pipe(
-      filter(token => token !== null),
-      take(1),
-      switchMap(token => next.handle(this.addToken(req, token!)))
-    );
-  }
 }

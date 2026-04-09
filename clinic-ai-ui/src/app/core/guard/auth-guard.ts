@@ -1,17 +1,22 @@
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  const isLoggedIn = auth.isAuthenticated() ;
+  // ✅ If already verified in memory, allow immediately
+  if (auth.currentUser()) return true;
 
-  if (isLoggedIn) return true;
-
-  router.navigate(['/login'], {
-    queryParams: { returnUrl: location.pathname }
-  });
-  return false;
+  // ✅ Otherwise, ask the server (cookie is sent automatically)
+  return auth.me().pipe(
+    map(user => {
+      if (user) return true;
+      return router.createUrlTree(['/login']);
+    }),
+    catchError(() => of(router.createUrlTree(['/login'])))
+  );
 };

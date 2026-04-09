@@ -22,12 +22,12 @@ namespace ClinicAI.Application.Features.Users.Command
         public async Task<Result<AuthResponse>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             if (request.Password != request.ConfirmPassword)
-                throw new Exception("Passwords do not match");
+               return Result<AuthResponse>.Failure("Passwords do not match");
 
             var exists = await _context.Users.AnyAsync(u => u.Email == request.Email, cancellationToken);
 
             if (exists)
-                throw new Exception("Email already exists");
+                return Result<AuthResponse>.Failure("Email already exists");
 
             var user = new User
             {

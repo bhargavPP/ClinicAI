@@ -257,7 +257,7 @@ export class BookAppointmentComponent implements OnInit {
   loadAppointments() {
     
      this.appointmentService
-      .getAppointments(this.currentPatientId)
+      .getMyAppointments()
        .subscribe(res => {
         
          this.appointments = res;

@@ -28,7 +28,8 @@ namespace ClinicAI.Application.Features.Users.Command
                                      .Include(x => x.User)
                                      .Where(x => !x.IsRevoked)
                                      .ToListAsync(cancellationToken);
-
+            if (string.IsNullOrEmpty(request.RefreshToken))
+                return Result<AuthResponse>.Failure("Refresh token is missing");
             var storedToken = tokens.FirstOrDefault(t =>
                 BCrypt.Net.BCrypt.Verify(request.RefreshToken, t.Token));
 
@@ -61,7 +62,7 @@ namespace ClinicAI.Application.Features.Users.Command
             // ✅ Save new refresh token
             _context.RefreshTokens.Add(new Domain.Entities.RefreshToken
             {
-                Token = refreshToken,
+                Token = BCrypt.Net.BCrypt.HashPassword(refreshToken),
                 UserId = user.Id,
                 ExpiresAt = DateTime.UtcNow.AddDays(7)
             });

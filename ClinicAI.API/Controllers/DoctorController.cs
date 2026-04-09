@@ -24,7 +24,7 @@ namespace ClinicAI.API.Controllers
             var result = await _mediator.Send(new GetDoctorsQuery());
             return Ok(result);
         }
-
+        [Authorize(Roles = "Doctor,Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateDoctorCommand command)
         {
@@ -32,13 +32,14 @@ namespace ClinicAI.API.Controllers
             var id = await _mediator.Send(command);
             return Ok(id);
         }
+        [Authorize(Roles = "Doctor,Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _mediator.Send(new DeleteDoctorCommand { Id = id });
             return Ok(result);
         }
-
+        [Authorize(Roles = "Doctor,Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, UpdateDoctorCommand command)
         {

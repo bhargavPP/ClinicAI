@@ -11,19 +11,20 @@ public class EmailProcessor
 {
     private readonly ILogger<EmailProcessor> _logger;
     private readonly IEmailService _emailservice;
-    public EmailProcessor(ILogger<EmailProcessor> logger)
+    public EmailProcessor(ILogger<EmailProcessor> logger, IEmailService emailService)
     {
         _logger = logger;
+        _emailservice = emailService; // ← inject it
     }
 
     [Function(nameof(EmailProcessor))]
-    public async Task Run([QueueTrigger("email-queue", Connection = "AzureWebJobsStorage1")] string message, FunctionContext context)
+    public async Task Run([QueueTrigger("email-queue", Connection = "AzureWebJobsStorage")] string message, FunctionContext context)
     {
         var logger = context.GetLogger("EmailProcessor");
         try
         {
-            var json = Encoding.UTF8.GetString(Convert.FromBase64String(message));
-            var email = JsonSerializer.Deserialize<EmailMessage>(json);
+           // var json = Encoding.UTF8.GetString(Convert.FromBase64String(message));
+            var email = JsonSerializer.Deserialize<EmailMessage>(message);
 
             if (email != null)
             {
