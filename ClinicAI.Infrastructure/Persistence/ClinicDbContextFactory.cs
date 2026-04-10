@@ -24,9 +24,9 @@ namespace ClinicAI.Infrastructure.Persistence
 
             // Pass mock/no-op services for design-time only
             return new ClinicDbContext(
-                optionsBuilder.Options,
-                new NoOpCurrentUserService(),
-                new NoOpDateTimeService()
+                optionsBuilder.Options, new NoOpDateTimeService(),
+                new NoOpCurrentUserService()
+                
             );
         }
     }

@@ -55,7 +55,7 @@ export class AuthService {
       }),
       catchError((error) => {
         this._isLoading.set(false);
-        console.error("🔥 FULL ERROR:", error);
+        console.error(" FULL ERROR:", error);
   return throwError(() => error);
       //  return throwError(() => new Error(error.error?.message || 'Login failed'));
       }));

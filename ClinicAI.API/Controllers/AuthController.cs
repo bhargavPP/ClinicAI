@@ -25,10 +25,10 @@ public class AuthController : ControllerBase
             return BadRequest(result.Message);
 
         var data = result.Data;
-
+        var message = result.Message;
         SetCookies(data);
 
-        return Ok(new { user = data.User });
+        return Ok(new { user = data.User, message= message });
     }
 
     [HttpPost("login")]
@@ -40,10 +40,10 @@ public class AuthController : ControllerBase
             return Unauthorized(result.Message);
 
         var data = result.Data;
-
+        var message= result.Message;
         SetCookies(data);
 
-        return Ok(new { user = data.User });
+        return Ok(new { user = data.User , message= message });
     }
     [HttpGet("me")]
     [Authorize]

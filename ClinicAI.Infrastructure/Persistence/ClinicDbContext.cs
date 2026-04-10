@@ -8,9 +8,9 @@ namespace ClinicAI.Infrastructure.Persistence
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IDateTime _dateTime;
-        public ClinicDbContext(DbContextOptions<ClinicDbContext> options, ICurrentUserService currentUserService,IDateTime dateTime ) : base(options)
+        public ClinicDbContext(DbContextOptions<ClinicDbContext> options,IDateTime dateTime, ICurrentUserService? currentUserService = null) : base(options)
         {
-            _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+            _currentUserService = currentUserService  ;
             _dateTime = dateTime;
         }
         public DbSet<Doctor> Doctors => Set<Doctor>();
@@ -118,7 +118,7 @@ namespace ClinicAI.Infrastructure.Persistence
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var userId = _currentUserService.UserId;
+            var userId = _currentUserService?.UserId ?? Guid.Empty;
 
             foreach (var entry in ChangeTracker.Entries<BaseEntity>())
             {

@@ -1,18 +1,16 @@
 using Azure.Storage.Queues;
 using ClinicAI.API.Middleware;
+using ClinicAI.Application.common;
 using ClinicAI.Application.Interfaces;
-
 using ClinicAI.Infrastructure.Interface;
 using ClinicAI.Infrastructure.Persistence;
-using FluentValidation;
-using Hangfire;
-using MediatR;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // =========================
@@ -21,81 +19,41 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
-//builder.Services.AddHangfire(config => config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
-//builder.Services.AddHangfireServer();
+
 // =========================
-// ✅ CORS (LOCAL + AZURE)
+// ✅ CORS
 // =========================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
         if (builder.Environment.IsDevelopment())
-        {
-            policy.WithOrigins(
-                    "http://localhost:4200",
-                    "https://localhost:4200",
-                    "http://localhost:51912"
-                )
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        }
+            policy.WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:51912")
+                  .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
         else
-        {
-            policy.WithOrigins(
-                    "https://clinic-ai-ui.azurewebsites.net"
-                )
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        }
+            policy.WithOrigins("https://clinic-ai-ui.azurewebsites.net")
+                  .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
     });
 });
 
 // =========================
-// ✅ MediatR
+// ✅ APPLICATION + INFRASTRUCTURE (one line each)
 // =========================
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddApplication();
 
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(ClinicAI.Application.common.AssemblyReference).Assembly));
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // =========================
-// ✅ FluentValidation
+// ✅ API-ONLY SERVICES
 // =========================
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>),
-    typeof(ClinicAI.Application.common.Behaviors.ValidationBehavior<,>));
-
-builder.Services.AddValidatorsFromAssembly(typeof(ClinicAI.Application.common.AssemblyReference).Assembly);
-
-// =========================
-// ✅ DB Context
-// =========================
-builder.Services.AddDbContext<ClinicDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddHealthChecks().AddDbContextCheck<ClinicDbContext>("Database").AddCheck("Self", () => HealthCheckResult.Healthy());
-builder.Services.AddScoped<IClinicDbContext, ClinicDbContext>();
-
-// =========================
-// ✅ Services
-// =========================
-builder.Services.AddScoped<IDateTime, DateTimeService>();
+builder.Services.AddSingleton<IQueueService, AzureQueueService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-//builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddSingleton<IQueueService, AzureQueueService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<ClinicAI.Shared.IEmailService, EmailService>();
-builder.Services.AddScoped<ClinicAI.Shared.Interfaces.IEmailLogService, ClinicAI.Infrastructure.Interface.EmailLogService>();
 
-// Application Insights
-//builder.Services.AddApplicationInsightsTelemetryWorkerService();
-//builder.Services.ConfigureFunctionsApplicationInsights();
 // =========================
-// ✅ Controllers
+// ✅ CONTROLLERS + SWAGGER
 // =========================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -104,16 +62,12 @@ builder.Services.AddSwaggerGen();
 // =========================
 // ✅ JWT AUTH
 // =========================
-
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         var key = builder.Configuration["Jwt:Key"];
-        Console.WriteLine($"JWT KEY VALUE: {key}");
         if (string.IsNullOrEmpty(key))
-        {
             Console.WriteLine("❌ JWT Key is NULL");
-        }
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -121,14 +75,10 @@ builder.Services.AddAuthentication("Bearer")
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
-
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(key ?? "fallback_key")
-            ),
-
+                Encoding.UTF8.GetBytes(key ?? "fallback_key")),
             ClockSkew = TimeSpan.Zero
         };
 
@@ -137,23 +87,17 @@ builder.Services.AddAuthentication("Bearer")
             OnMessageReceived = context =>
             {
                 var token = context.Request.Cookies["accessToken"];
-
                 if (!string.IsNullOrEmpty(token))
-                {
                     context.Token = token;
-                }
-
                 return Task.CompletedTask;
             },
             OnAuthenticationFailed = context =>
             {
-                // ← ADD THIS
                 Console.WriteLine($"❌ Auth failed: {context.Exception.Message}");
                 return Task.CompletedTask;
             },
             OnTokenValidated = context =>
             {
-                // ← ADD THIS
                 Console.WriteLine($"✅ Token validated for: {context.Principal?.Identity?.Name}");
                 return Task.CompletedTask;
             }
@@ -161,11 +105,20 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddAuthorization();
+
+// =========================
+// ✅ HEALTH CHECKS
+// =========================
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ClinicDbContext>("Database")
+    .AddCheck("Self", () => HealthCheckResult.Healthy());
+
 // =========================
 // ✅ BUILD APP
 // =========================
 var app = builder.Build();
 Console.WriteLine($"ENVIRONMENT: {builder.Environment.EnvironmentName}");
+
 // =========================
 // ✅ DEV TOOLS
 // =========================
@@ -176,25 +129,19 @@ if (app.Environment.IsDevelopment())
 }
 
 // =========================
-// ✅ PIPELINE (CRITICAL ORDER)
+// ✅ PIPELINE
 // =========================
-
-//  CORS MUST BE FIRST
 app.UseCors("AllowAngular");
 app.Use(async (context, next) =>
 {
     var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-
     logger.LogInformation("➡️ {Method} {Path}", context.Request.Method, context.Request.Path);
-
     await next();
-
     logger.LogInformation("⬅️ Response: {StatusCode}", context.Response.StatusCode);
 });
 app.UseMiddleware<ExceptionMiddleware>();
 if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -203,27 +150,6 @@ app.UseAuthorization();
 // ✅ ENDPOINTS
 // =========================
 app.MapControllers();
-
-// =========================
-// ✅ DB INIT
-// =========================
-using (var scope = app.Services.CreateScope())
-{
-
-    try
-    {
-        var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
-
-        db.Database.Migrate();
-        await DbInitializer.SeedAdminAsync(app.Services);
-
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("❌ DB ERROR:");
-        Console.WriteLine(ex.ToString());
-    }
-}
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = async (context, report) =>
@@ -238,36 +164,53 @@ app.MapHealthChecks("/health", new HealthCheckOptions
                 error = e.Value.Exception?.Message
             })
         });
-
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsync(result);
     }
 }).AllowAnonymous();
-//app.UseHangfireDashboard();
 
-// Add before app.Run()
+// =========================
+// ✅ DB INIT
+// =========================
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ClinicDbContext>();
+        db.Database.Migrate();
+        await DbInitializer.SeedAdminAsync(app.Services);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ DB ERROR: {ex}");
+    }
+}
+
+// =========================
+// ✅ QUEUE INIT
+// =========================
 var storageConnection =
     builder.Configuration["StorageConnectionString"] ??
-    builder.Configuration.GetConnectionString("StorageConnection");
+    builder.Configuration["AzureQueue:ConnectionString"];
 
 if (!string.IsNullOrEmpty(storageConnection))
 {
     try
     {
-        var poisonQueue = new QueueClient(storageConnection, "email-queue-poison");
         var emailQueue = new QueueClient(storageConnection, "email-queue");
+        var poisonQueue = new QueueClient(storageConnection, "email-queue-poison");
 
-        await poisonQueue.CreateIfNotExistsAsync();
         await emailQueue.CreateIfNotExistsAsync();
+        await poisonQueue.CreateIfNotExistsAsync();
 
         if (app.Environment.IsDevelopment())
         {
-            await poisonQueue.ClearMessagesAsync();
             await emailQueue.ClearMessagesAsync();
+            await poisonQueue.ClearMessagesAsync();
             Console.WriteLine("✅ Queues cleared (DEV only)");
         }
 
-        Console.WriteLine($"✅ Queues initialized using: {storageConnection}");
+        Console.WriteLine($"✅ Queues initialized | ENV: {app.Environment.EnvironmentName}");
     }
     catch (Exception ex)
     {
@@ -278,4 +221,5 @@ else
 {
     Console.WriteLine("⚠️ StorageConnectionString missing");
 }
+
 app.Run();

@@ -11,5 +11,7 @@ namespace ClinicAI.Shared.Contracts
         public string Body { get; set; } = string.Empty;
         public EmailType Type { get; set; }
         public string CorrelationId { get; set; } = Guid.NewGuid().ToString();
+
+        public int RetryCount { get; set; } = 0;    
     }
 }
