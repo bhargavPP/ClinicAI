@@ -26,8 +26,8 @@ export class AuthInterceptor implements HttpInterceptor {
           req.url.includes('/auth/register') ||
           req.url.includes('/auth/refresh') ||
           req.url.includes('/auth/me')||
-           req.url.includes('/auth/logout')
-        ) {
+           req.url.includes('/auth/logout'))
+         {
           return throwError(() => err);
         }
 
@@ -57,7 +57,7 @@ export class AuthInterceptor implements HttpInterceptor {
             return this.refreshSubject.pipe(
               filter(done => done === true),
               take(1),
-              switchMap(() => next.handle(req.clone({ withCredentials: true })))
+              switchMap(() => next.handle(clonedRequest))
             );
           }
         }
