@@ -25,7 +25,9 @@ export class AuthInterceptor implements HttpInterceptor {
         if (req.url.includes('/auth/login') ||
           req.url.includes('/auth/register') ||
           req.url.includes('/auth/refresh') ||
-          req.url.includes('/auth/me')) {
+          req.url.includes('/auth/me')||
+           req.url.includes('/auth/logout')
+        ) {
           return throwError(() => err);
         }
 
@@ -45,7 +47,7 @@ export class AuthInterceptor implements HttpInterceptor {
               }),
               catchError(error => {
                 this.isRefreshing = false;
-              //  this.auth.logout();
+                this.auth.logout();
                 console.log("error", error);
                 return throwError(() => error);
               })
